@@ -545,3 +545,78 @@ def test_default_code_has_six_letters():
     assert len(letters) == claims.CODE_LETTERS_DEFAULT == 6
     assert set(letters) <= set(claims.CODE_LETTERS)
 
+
+
+# ---------------------------------------------------------------- language
+def _set_language(portal, lang):
+    con = connect(portal["db"])
+    claims.ensure_defaults(con, language=lang)
+    con.close()
+
+
+def test_english_is_the_default_language(portal, browser):
+    assert claims.settings(connect(portal["db"]))["language"] == "en"
+    gate = Browser(portal["port"]).get("/")[2]
+    assert gate.startswith("<!doctype html><html lang=en>") and "Workshop code" in gate
+
+
+def test_zh_tw_student_pages(portal, browser):
+    _set_language(portal, "zh-TW")
+    gate = Browser(portal["port"]).get("/")[2]
+    assert "<html lang=zh-TW>" in gate and "Workshop 代碼" in gate and "Workshop code" not in gate
+    assert "這個 workshop 代碼無效。" in Browser(portal["port"]).enter("nope")[2]
+    claim = browser.get("/")[2]
+    assert "領取我的 lab" in claim and "可領取" in claim and "Work&lt;shop&gt;" in claim
+    assert "請輸入您的姓名。" in browser.claim(name="")[2]
+    _, h, _ = browser.claim()
+    lab = browser.get(h["Location"])[2]
+    assert "<html lang=zh-TW>" in lab and "密碼" in lab and "data-done='已複製'" in lab
+    assert "Pw&lt;&#x27;&quot;&amp;&gt;1aA" in lab  # lab data is shown as is
+    privacy = browser.get("/privacy")[2]
+    assert "我們保存的資料" in privacy and "24 小時" in privacy and "3 天" in privacy
+
+
+def test_instructor_page_stays_english(portal):
+    _set_language(portal, "zh-TW")
+    con = connect(portal["db"])
+    tok = claims.rotate_admin_token(con)
+    con.close()
+    assert "instructor view" in _req(portal["port"], "GET", f"/admin/{tok}")[2]
+
+
+def test_unknown_language_falls_back_to_english(portal, browser):
+    _set_language(portal, "fr")
+    page = browser.get("/")[2]
+    assert "<html lang=en>" in page and "Get my lab" in page
+
+
+def test_language_tags_and_missing_strings_fall_back_to_english():
+    from rodeo.portal.i18n import language, tr
+
+    assert language("zh-tw") == language("zh_TW") == "zh-TW"
+    assert language("") == language(None) == language("de") == "en"
+    assert tr("zh-TW", "Get my lab") == "領取我的 lab"
+    assert tr("zh-TW", "Not in the catalog {x}", x=1) == "Not in the catalog 1"
+    assert tr("xx", "Get my lab") == "Get my lab"
+
+
+def test_every_claim_error_a_student_can_see_is_translated():
+    """A new ClaimError text in claims.py falls back to English until it is added here."""
+    import ast
+    import inspect
+
+    from rodeo.portal.i18n import ZH_TW
+
+    funcs = (claims.normalize_email, claims.pin_problem, claims.claim_open, claims.recover)
+    texts = {claims._NO_MATCH, f"The PIN must be {claims.PIN_LENGTH} digits."}
+    for fn in funcs:
+        for node in ast.walk(ast.parse(inspect.getsource(fn))):
+            if isinstance(node, ast.Call) and getattr(node.func, "id", "") in ("ClaimError", "GuessError"):
+                value = node.args[0]
+            elif isinstance(node, ast.Return):
+                value = node.value
+            else:
+                continue
+            if isinstance(value, ast.Constant) and isinstance(value.value, str):
+                texts.add(value.value)
+    assert texts - set(ZH_TW) == set()

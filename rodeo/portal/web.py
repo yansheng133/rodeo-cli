@@ -18,6 +18,7 @@ import sys
 import threading
 import time
 from datetime import datetime, timezone
+from functools import partial
 from http.cookies import SimpleCookie
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -26,6 +27,7 @@ from urllib.parse import parse_qs
 
 from . import claims
 from .db import connect
+from .i18n import language, tr
 
 MAX_BODY = 4096
 # Only *failed* attempts count (wrong code or PIN, unknown link, bad admin token):
@@ -113,7 +115,7 @@ footer{border-top:1px solid var(--border);background:var(--surface);color:var(--
 """
 _JS = (
     "document.querySelectorAll('.cp').forEach(function(b){b.addEventListener('click',function(){"
-    "navigator.clipboard.writeText(b.dataset.v);b.textContent='copied'})});"
+    "navigator.clipboard.writeText(b.dataset.v);b.textContent=b.dataset.done||'copied'})});"
 )
 # Served from rodeo/portal/static (copied to the VM with the code). Licences for the
 # fonts (SIL OFL 1.1) ship alongside them and are not served.
@@ -133,7 +135,7 @@ def _e(value: Any) -> str:
 
 def _page(title: str, body: str, *, heading: str = "", sub: str = "", badge: str = "",
           product: str = "", tag: str = "", wide: bool = False,
-          refresh: int | None = None) -> bytes:
+          refresh: int | None = None, lang: str = "en") -> bytes:
     """SUSE-branded shell: sticky top bar, green hero, content, footer.
 
     ``heading`` is trusted HTML (callers escape); every other text is escaped here."""
@@ -147,41 +149,46 @@ def _page(title: str, body: str, *, heading: str = "", sub: str = "", badge: str
                 + (f"<p class=hero-sub>{_e(sub)}</p>" if sub else "")
                 + "</div></header>")
     return (
-        "<!doctype html><html lang=en><head><meta charset=utf-8>"
+        f"<!doctype html><html lang={_e(lang)}><head><meta charset=utf-8>"
         "<meta name=viewport content='width=device-width,initial-scale=1'>"
         f"{meta}<title>{_e(title)}</title><link rel=stylesheet href=/s.css></head>"
         f"<body{cls}><nav><div class='wrap nav-inner'><a class=logo href=/>"
         "<img class=logo-img src=/static/suse-logo.png alt=SUSE><span class=logo-divider></span>"
-        f"<span class=logo-product>{_e(product or 'Hands-on labs')}</span></a>"
+        f"<span class=logo-product>{_e(product or tr(lang, 'Hands-on labs'))}</span></a>"
         + (f"<span class=nav-tag>{_e(tag)}</span>" if tag else "")
         + f"</div></nav>{hero}<main><div class=wrap>{body}</div></main>"
         "<footer><div class='wrap footer-inner'><img class=footer-logo src=/static/suse-logo.png alt=SUSE>"
-        "<span class=footer-privacy>Privacy: we only keep your name and email for this workshop, "
-        "deleted when it ends. Essential cookies only. <a href=/privacy>Details</a></span>"
+        "<span class=footer-privacy>"
+        + tr(lang, "Privacy: we only keep your name and email for this workshop, deleted when "
+                   "it ends. Essential cookies only.")
+        + f" <a href=/privacy>{tr(lang, 'Details')}</a></span>"
         "</div></footer>"
         "<script src=/s.js></script></body></html>"
     ).encode()
 
 
-def _guide(url: str, *, compact: bool = False) -> str:
+def _guide(url: str, *, compact: bool = False, lang: str = "en") -> str:
     """Workshop guide link: a card on the student's lab page, a button elsewhere.
     The URL was validated (https:// or /path) when it was configured."""
     if not url:
         return ""
     ext = url.startswith("https://")
     target = " target=_blank rel='noopener noreferrer'" if ext else ""
-    btn = f"<a class=btn href='{_e(url)}'{target}>Open the workshop guide</a>"
+    btn = f"<a class=btn href='{_e(url)}'{target}>{tr(lang, 'Open the workshop guide')}</a>"
     if compact:
         return f"<p class=guide-inline>{btn}</p>"
-    return ("<div class='card guide'><h2>Workshop guide</h2><p class=note>Step-by-step "
-            "exercises for this lab. Keep it open next to this page.</p>" + btn + "</div>")
+    return (f"<div class='card guide'><h2>{tr(lang, 'Workshop guide')}</h2><p class=note>"
+            + tr(lang, "Step-by-step exercises for this lab. Keep it open next to this page.")
+            + "</p>" + btn + "</div>")
 
 
-def _copyable(value: str) -> str:
-    return f"<code>{_e(value)}</code><button class=cp type=button data-v='{_e(value)}'>copy</button>"
+def _copyable(value: str, lang: str = "en") -> str:
+    done = "" if lang == "en" else f" data-done='{_e(tr(lang, 'copied'))}'"
+    return (f"<code>{_e(value)}</code><button class=cp type=button data-v='{_e(value)}'{done}>"
+            f"{tr(lang, 'copy')}</button>")
 
 
-def _span(seconds: float) -> str:
+def _span(seconds: float, lang: str = "en") -> str:
     """Human duration for the privacy page, from the constants the code uses."""
     seconds = int(seconds)
     if seconds > 86400 and seconds % 86400 == 0:
@@ -190,114 +197,127 @@ def _span(seconds: float) -> str:
         n, unit = seconds // 3600, "hour"
     else:
         n, unit = max(1, seconds // 60), "minute"
-    return f"{n} {unit}{'' if n == 1 else 's'}"
+    return tr(lang, f"{{n}} {unit}{'' if n == 1 else 's'}", n=n)
 
 
-def privacy_page(title: str) -> bytes:
+def privacy_page(title: str, lang: str = "en") -> bytes:
     """Plain-language privacy notice. Keep it true to the code: every duration below
     comes from the constants that set the cookies and the failure limit."""
+    t = partial(tr, lang)
     cookies = (
-        ("csrf", "Protects the forms on this site from forged submissions.",
-         "Until you close the browser"),
-        ("access", "Remembers that you entered the workshop code.", _span(ACCESS_MAX_AGE)),
-        ("lab", "Remembers this device so “Continue to your lab” can take you back. "
-                "“Forget this device” removes it.", _span(LAB_COOKIE_MAX_AGE)),
+        ("csrf", t("Protects the forms on this site from forged submissions."),
+         t("Until you close the browser")),
+        ("access", t("Remembers that you entered the workshop code."),
+         _span(ACCESS_MAX_AGE, lang)),
+        ("lab", t("Remembers this device so “Continue to your lab” can take you back. "
+                  "“Forget this device” removes it."), _span(LAB_COOKIE_MAX_AGE, lang)),
     )
     rows = "".join(f"<tr><td><code>{n}</code></td><td>{_e(why)}</td><td>{_e(life)}</td></tr>"
                    for n, why, life in cookies)
+    window = _e(_span(RATE_WINDOW, lang))
     body = f"""<div class='privacy'>
-<div class=card><h2>What we keep</h2>
-<ul><li><b>Your name and email</b>, to assign your lab and to give it back to you if you lose the page.</li>
-<li><b>Your PIN</b>, stored only as a one-way hash: nobody can read it, including the instructor.</li>
-<li><b>When you claimed and first opened your lab.</b></li></ul>
-<p>This is kept only on this workshop's own server. Your instructor can see which lab you have, with your name and email, to help you during the workshop, and can export that list (for example for attendance).</p></div>
-<div class=card><h2>How long</h2>
-<p>Everything above is deleted when the workshop ends and this server is shut down.</p></div>
-<div class=card><h2>What we do not do</h2>
-<ul><li>No tracking, analytics or advertising, and nothing is shared with third parties. Even the fonts and logo are served by this server.</li>
-<li>Your network address is not stored. To stop password guessing, the addresses of failed attempts are kept in memory for at most {_e(_span(RATE_WINDOW))} and never written to disk.</li></ul></div>
-<div class=card><h2>Cookies</h2>
-<p>Only these three, all needed for the portal to work. None of them tracks you.</p>
-<div class=tbl><table><thead><tr><th>Name</th><th>Purpose</th><th>Lasts</th></tr></thead><tbody>{rows}</tbody></table></div></div>
-<div class=card><h2>Questions</h2><p>Ask your instructor.</p></div>
-<p><a class=btn href=/>Back to the portal</a></p></div>"""
-    return _page("Privacy", body, heading="Privacy", badge="Your data",
-                 sub="What this lab portal keeps, why, and for how long.", product=title)
+<div class=card><h2>{t("What we keep")}</h2>
+<ul><li>{t("<b>Your name and email</b>, to assign your lab and to give it back to you if you lose the page.")}</li>
+<li>{t("<b>Your PIN</b>, stored only as a one-way hash: nobody can read it, including the instructor.")}</li>
+<li>{t("<b>When you claimed and first opened your lab.</b>")}</li></ul>
+<p>{t("This is kept only on this workshop's own server. Your instructor can see which lab you have, with your name and email, to help you during the workshop, and can export that list (for example for attendance).")}</p></div>
+<div class=card><h2>{t("How long")}</h2>
+<p>{t("Everything above is deleted when the workshop ends and this server is shut down.")}</p></div>
+<div class=card><h2>{t("What we do not do")}</h2>
+<ul><li>{t("No tracking, analytics or advertising, and nothing is shared with third parties. Even the fonts and logo are served by this server.")}</li>
+<li>{t("Your network address is not stored. To stop password guessing, the addresses of failed attempts are kept in memory for at most {window} and never written to disk.", window=window)}</li></ul></div>
+<div class=card><h2>{t("Cookies")}</h2>
+<p>{t("Only these three, all needed for the portal to work. None of them tracks you.")}</p>
+<div class=tbl><table><thead><tr><th>{t("Name")}</th><th>{t("Purpose")}</th><th>{t("Lasts")}</th></tr></thead><tbody>{rows}</tbody></table></div></div>
+<div class=card><h2>{t("Questions")}</h2><p>{t("Ask your instructor.")}</p></div>
+<p><a class=btn href=/>{t("Back to the portal")}</a></p></div>"""
+    return _page(t("Privacy"), body, heading=t("Privacy"), badge=t("Your data"),
+                 sub=t("What this lab portal keeps, why, and for how long."), product=title,
+                 lang=lang)
 
 
-def _forget_form(csrf: str) -> str:
+def _forget_form(csrf: str, lang: str = "en") -> str:
     return (f"<form method=post action=/forget class=forget><input type=hidden name=csrf value='{_e(csrf)}'>"
-            "<button class=linkbtn type=submit>Not you? Forget this device</button></form>")
+            f"<button class=linkbtn type=submit>{tr(lang, 'Not you? Forget this device')}</button></form>")
 
 
-def _continue(mine: Any, csrf: str) -> str:
+def _continue(mine: Any, csrf: str, lang: str = "en") -> str:
     """Card for a browser that already holds a lab (remembered device)."""
     if mine is None:
         return ""
-    return (f"<div class='card guide'><h2>Welcome back, {_e(mine['name'] or 'student')}</h2>"
-            f"<p class=note>This device remembers your lab <b>{_e(mine['id'])}</b>.</p>"
-            f"<p class=guide-inline><a class=btn href='/l/{_e(mine['token'])}'>Continue to your lab</a></p>"
-            + _forget_form(csrf) + "</div>")
+    t = partial(tr, lang)
+    return (f"<div class='card guide'><h2>{t('Welcome back, {name}', name=_e(mine['name'] or t('student')))}</h2>"
+            f"<p class=note>{t('This device remembers your lab <b>{lab}</b>.', lab=_e(mine['id']))}</p>"
+            f"<p class=guide-inline><a class=btn href='/l/{_e(mine['token'])}'>{t('Continue to your lab')}</a></p>"
+            + _forget_form(csrf, lang) + "</div>")
 
 
-def _recover_form(csrf: str, *, email: str = "", err: str = "") -> str:
+def _recover_form(csrf: str, *, email: str = "", err: str = "", lang: str = "en") -> str:
     """Lost link on a new device: email + PIN, nothing else."""
+    t = partial(tr, lang)
     msg = f"<p class=err role=alert>{_e(err)}</p>" if err else ""
     opened = " open" if err else ""
-    return (f"<details class='card recover'{opened}><summary>Already have a lab? Get it back</summary>{msg}"
+    return (f"<details class='card recover'{opened}><summary>{t('Already have a lab? Get it back')}</summary>{msg}"
             f"<form method=post action=/recover><input type=hidden name=csrf value='{_e(csrf)}'>"
-            f"<label for=r-email>Email</label><input id=r-email name=email type=email required maxlength=254 autocomplete=email value='{_e(email)}'>"
-            "<label for=r-pin>Your 6-digit PIN</label><input id=r-pin name=pin required inputmode=numeric pattern='[0-9]{6}' minlength=6 maxlength=6 autocomplete=off>"
-            "<div class=hint>Locked out or forgot your PIN? Ask your instructor.</div>"
-            "<button class=btn type=submit>Get my lab back</button></form></details>")
+            f"<label for=r-email>{t('Email')}</label><input id=r-email name=email type=email required maxlength=254 autocomplete=email value='{_e(email)}'>"
+            f"<label for=r-pin>{t('Your 6-digit PIN')}</label><input id=r-pin name=pin required inputmode=numeric pattern='[0-9]{{6}}' minlength=6 maxlength=6 autocomplete=off>"
+            f"<div class=hint>{t('Locked out or forgot your PIN? Ask your instructor.')}</div>"
+            f"<button class=btn type=submit>{t('Get my lab back')}</button></form></details>")
 
 
-def gate_page(title: str, csrf: str, *, err: str = "", mine: Any = None) -> bytes:
+def gate_page(title: str, csrf: str, *, err: str = "", mine: Any = None, lang: str = "en") -> bytes:
     """First page: only the workshop code. Nothing about labs or people before it
     (except, on a remembered device, a way back to that student's own lab)."""
+    t = partial(tr, lang)
     msg = f"<p class=err role=alert>{_e(err)}</p>" if err else ""
-    return _page(title or "Hands-on labs", _continue(mine, csrf) + f"""<form class=card method=post action=/enter>{msg}
+    return _page(title or t("Hands-on labs"), _continue(mine, csrf, lang) + f"""<form class=card method=post action=/enter>{msg}
 <input type=hidden name=csrf value='{_e(csrf)}'>
-<label for=code>Workshop code</label><input id=code name=code required maxlength=40 autocomplete=off autocapitalize=characters spellcheck=false placeholder="RODEO-ABCD-20260930">
-<button class=btn type=submit>Continue</button></form>""",
-                 heading=_e(title or "Hands-on labs"), badge="Hands-on lab",
-                 sub="Enter the workshop code your instructor gives you.", product=title)
+<label for=code>{t("Workshop code")}</label><input id=code name=code required maxlength=40 autocomplete=off autocapitalize=characters spellcheck=false placeholder="RODEO-ABCD-20260930">
+<button class=btn type=submit>{t("Continue")}</button></form>""",
+                 heading=_e(title or t("Hands-on labs")), badge=t("Hands-on lab"),
+                 sub=t("Enter the workshop code your instructor gives you."), product=title,
+                 lang=lang)
 
 
 def claim_form(title: str, csrf: str, *, mode: str, is_open: bool, err: str = "",
                email: str = "", name: str = "", rows: list[dict[str, Any]] | None = None,
-               guide_url: str = "", mine: Any = None, recover_err: str = "") -> bytes:
-    labs = _guide(guide_url, compact=True) + board(rows or [])
-    back = _continue(mine, csrf)
-    shell = {"heading": _e(title or "Hands-on labs"), "badge": "Hands-on lab", "product": title}
+               guide_url: str = "", mine: Any = None, recover_err: str = "",
+               lang: str = "en") -> bytes:
+    t = partial(tr, lang)
+    labs = _guide(guide_url, compact=True, lang=lang) + board(rows or [], lang)
+    back = _continue(mine, csrf, lang)
+    shell = {"heading": _e(title or t("Hands-on labs")), "badge": t("Hands-on lab"), "product": title,
+             "lang": lang}
     if mode == "roster":
-        return _page(title or "Hands-on labs", back + labs,
-                     sub="Open the personal link your instructor sent you to get your lab.", **shell)
-    recover = _recover_form(csrf, email=email if recover_err else "", err=recover_err)
+        return _page(title or t("Hands-on labs"), back + labs,
+                     sub=t("Open the personal link your instructor sent you to get your lab."), **shell)
+    recover = _recover_form(csrf, email=email if recover_err else "", err=recover_err, lang=lang)
     if not is_open:
-        return _page(title or "Hands-on labs", back + recover + labs,
-                     sub="Claiming is closed. Ask your instructor.", **shell)
+        return _page(title or t("Hands-on labs"), back + recover + labs,
+                     sub=t("Claiming is closed. Ask your instructor."), **shell)
     msg = f"<p class=err role=alert>{_e(err)}</p>" if err else ""
-    return _page(title or "Hands-on labs", back + f"""<form class=card method=post action=/claim>{msg}
+    return _page(title or t("Hands-on labs"), back + f"""<form class=card method=post action=/claim>{msg}
 <input type=hidden name=csrf value='{_e(csrf)}'>
-<label for=name>Your name</label><input id=name name=name required maxlength=80 autocomplete=name value='{_e(name)}'>
-<label for=email>Email</label><input id=email name=email type=email required maxlength=254 autocomplete=email value='{_e(email)}'>
-<label for=pin>6-digit PIN</label><input id=pin name=pin required inputmode=numeric pattern="[0-9]{{6}}" minlength=6 maxlength=6 autocomplete=off>
-<div class=hint>Choose 6 digits that are not obvious (not 123456 or 111111). On another device, your email and this PIN get your lab back.</div>
-<button class=btn type=submit>Get my lab</button>
-<p class=privacy-note>Your name and email are used only to assign your lab and are deleted after the workshop. <a href=/privacy>Privacy details</a></p></form>{recover}{labs}""",
-                 sub="Claim your personal lab: it is yours for the whole workshop.", **shell)
+<label for=name>{t("Your name")}</label><input id=name name=name required maxlength=80 autocomplete=name value='{_e(name)}'>
+<label for=email>{t("Email")}</label><input id=email name=email type=email required maxlength=254 autocomplete=email value='{_e(email)}'>
+<label for=pin>{t("6-digit PIN")}</label><input id=pin name=pin required inputmode=numeric pattern="[0-9]{{6}}" minlength=6 maxlength=6 autocomplete=off>
+<div class=hint>{t("Choose 6 digits that are not obvious (not 123456 or 111111). On another device, your email and this PIN get your lab back.")}</div>
+<button class=btn type=submit>{t("Get my lab")}</button>
+<p class=privacy-note>{t("Your name and email are used only to assign your lab and are deleted after the workshop.")} <a href=/privacy>{t("Privacy details")}</a></p></form>{recover}{labs}""",
+                 sub=t("Claim your personal lab: it is yours for the whole workshop."), **shell)
 
 
-def _lab_cards(lab_id: str, data: dict[str, Any], key_href: str, *, ssh_title: str) -> str:
+def _lab_cards(lab_id: str, data: dict[str, Any], key_href: str, *, ssh_title: str,
+               lang: str = "en") -> str:
     """Credential cards for one lab (student page and instructor page share them)."""
+    t = partial(tr, lang)
     cards = ""
     for c in data.get("components") or []:
         cards += (
             f"<div class=card><h2>{_e(c.get('label', ''))}</h2><dl>"
             f"<dt>URL</dt><dd><a href='{_e(c['url'])}' target=_blank rel='noopener noreferrer'>{_e(c['url'])}</a></dd>"
-            f"<dt>User</dt><dd>{_copyable(c.get('user', 'admin'))}</dd>"
-            f"<dt>Password</dt><dd>{_copyable(c.get('password', ''))}</dd></dl></div>"
+            f"<dt>{t('User')}</dt><dd>{_copyable(c.get('user', 'admin'), lang)}</dd>"
+            f"<dt>{t('Password')}</dt><dd>{_copyable(c.get('password', ''), lang)}</dd></dl></div>"
         )
     ssh = data.get("ssh")
     if ssh:
@@ -309,48 +329,52 @@ def _lab_cards(lab_id: str, data: dict[str, Any], key_href: str, *, ssh_title: s
         cmd = f"ssh {port_opt}-i {key} {ssh['user']}@{ssh['host']}"
         cards += (
             f"<div class=card><h2>{_e(ssh_title)}</h2><dl>"
-            f"<dt>User</dt><dd>{_copyable(ssh['user'])}</dd><dt>Host</dt><dd>{_copyable(ssh['host'])}</dd>"
-            f"<dt>Port</dt><dd>{_copyable(str(port))}</dd></dl>"
-            f"<p><a class=btn href='{_e(key_href)}' download='{_e(key)}'>Download SSH key</a></p>"
-            "<p class=note>Then, in the folder where you saved it:</p>"
+            f"<dt>{t('User')}</dt><dd>{_copyable(ssh['user'], lang)}</dd>"
+            f"<dt>{t('Host')}</dt><dd>{_copyable(ssh['host'], lang)}</dd>"
+            f"<dt>{t('Port')}</dt><dd>{_copyable(str(port), lang)}</dd></dl>"
+            f"<p><a class=btn href='{_e(key_href)}' download='{_e(key)}'>{t('Download SSH key')}</a></p>"
+            f"<p class=note>{t('Then, in the folder where you saved it:')}</p>"
             f"<pre>chmod 600 {_e(key)}\n{_e(cmd)}</pre></div>"
         )
     return cards
 
 
-def board(rows: list[dict[str, Any]]) -> str:
+def board(rows: list[dict[str, Any]], lang: str = "en") -> str:
     """Public claim board: lab, state and the claimant's *name* (never email)."""
     if not rows:
         return ""
+    t = partial(tr, lang)
     body = "".join(
-        f"<tr><td>{_e(r['lab'])}</td><td><span class='st st-{_e(r['state'])}'>{_e(r['state'])}</span></td>"
+        f"<tr><td>{_e(r['lab'])}</td><td><span class='st st-{_e(r['state'])}'>{_e(t(r['state']))}</span></td>"
         f"<td>{_e(r['name']) if r['state'] == 'claimed' else ''}</td></tr>"
         for r in rows
     )
     free = sum(1 for r in rows if r["state"] == "free")
-    return (f"<h2 class=h2x>Labs <span class=note>{free} of {len(rows)} free</span></h2>"
-            "<div class='card tbl'><table><thead><tr><th>Lab</th><th>State</th>"
-            f"<th>Claimed by</th></tr></thead><tbody>{body}</tbody></table></div>")
+    return (f"<h2 class=h2x>{t('Labs')} <span class=note>{t('{free} of {total} free', free=free, total=len(rows))}</span></h2>"
+            f"<div class='card tbl'><table><thead><tr><th>{t('Lab')}</th><th>{t('State')}</th>"
+            f"<th>{t('Claimed by')}</th></tr></thead><tbody>{body}</tbody></table></div>")
 
 
 def lab_page(row: Any, token: str, *, title: str = "", guide_url: str = "",
-             csrf: str = "") -> bytes:
+             csrf: str = "", lang: str = "en") -> bytes:
+    t = partial(tr, lang)
     lab_id = row["id"]
     who = row["name"] or row["email"]
-    shell = {"heading": f"Your lab <span class=pill>{_e(lab_id)}</span>", "badge": "Your lab",
-             "product": title, "tag": "Personal link",
-             "sub": f"Assigned to {who}. Bookmark this page: it is your personal link. "
-                    "Do not share it."}
-    guide = _guide(guide_url)
+    shell = {"heading": f"{t('Your lab')} <span class=pill>{_e(lab_id)}</span>", "badge": t("Your lab"),
+             "product": title, "tag": t("Personal link"), "lang": lang,
+             "sub": t("Assigned to {who}. Bookmark this page: it is your personal link. "
+                      "Do not share it.", who=who)}
+    guide = _guide(guide_url, lang=lang)
     if not row["ready"]:
-        return _page(f"Lab {lab_id}", "<div class=card><h2>Still building</h2>"
-                     "<p>Your lab is not ready yet. This page refreshes every minute.</p></div>"
+        return _page(t("Lab {lab}", lab=lab_id), f"<div class=card><h2>{t('Still building')}</h2>"
+                     f"<p>{t('Your lab is not ready yet. This page refreshes every minute.')}</p></div>"
                      + guide, refresh=60, **shell)
     cards = guide + _lab_cards(lab_id, json.loads(row["data"] or "{}"), f"/l/{token}/key",
-                       ssh_title="SSH to your lab host")
-    forget = _forget_form(csrf) if csrf else ""
-    return _page(f"Lab {lab_id}", cards + "<p class=note>The lab web UIs use self-signed "
-                 "certificates. Accept the browser warning to continue.</p>" + forget, **shell)
+                               ssh_title=t("SSH to your lab host"), lang=lang)
+    forget = _forget_form(csrf, lang) if csrf else ""
+    return _page(t("Lab {lab}", lab=lab_id), cards + "<p class=note>"
+                 + t("The lab web UIs use self-signed certificates. Accept the browser warning "
+                     "to continue.") + "</p>" + forget, **shell)
 
 
 STALE_AFTER = 180  # seconds without a progress push before the page warns
@@ -554,14 +578,30 @@ class Handler(BaseHTTPRequestHandler):
     def _flags(self) -> str:
         return "; HttpOnly; SameSite=Strict" + ("; Secure" if self.secure_cookie else "")
 
+    def _lang(self) -> str:
+        con = connect(self.db_path)
+        try:
+            return language(claims.settings(con)["language"])
+        finally:
+            con.close()
+
     def _slow_down(self) -> None:
-        self._send(429, _page("Slow down", "", heading="Too many attempts",
-                              sub="Wait a few minutes and try again."))
+        lang = self._lang()
+        t = partial(tr, lang)
+        self._send(429, _page(t("Slow down"), "", heading=t("Too many attempts"),
+                              sub=t("Wait a few minutes and try again."), lang=lang))
 
     def _codes_paused(self) -> None:
-        self._send(429, _page("Slow down", "", heading="Too many wrong codes",
-                              sub="Too many wrong workshop codes from your network. Wait a few "
-                                  "minutes and try again, or ask your instructor."))
+        lang = self._lang()
+        t = partial(tr, lang)
+        self._send(429, _page(t("Slow down"), "", heading=t("Too many wrong codes"),
+                              sub=t("Too many wrong workshop codes from your network. Wait a few "
+                                    "minutes and try again, or ask your instructor."),
+                              lang=lang))
+
+    def _not_found(self) -> None:
+        lang = self._lang()
+        self._send(404, _page(tr(lang, "Not found"), "", heading=tr(lang, "Not found"), lang=lang))
 
     def _mine(self, con: Any) -> Any:
         """The lab this browser remembers (lab cookie), as a dict, or None."""
@@ -575,7 +615,8 @@ class Handler(BaseHTTPRequestHandler):
 
     def _front(self, code: int = 200, *, gate_err: str = "", **kw: Any) -> None:
         """Code gate, or (with a valid access cookie) claim form + lab board. A
-        remembered lab shows "Continue to your lab" on both."""
+        remembered lab shows "Continue to your lab" on both. Error texts arrive in
+        English and are translated here."""
         tok = self._csrf() or secrets.token_urlsafe(16)
         con = connect(self.db_path)
         try:
@@ -585,9 +626,12 @@ class Handler(BaseHTTPRequestHandler):
             mine = self._mine(con)
         finally:
             con.close()
+        lang = language(s["language"])
+        kw.update({k: tr(lang, v) for k, v in kw.items() if k in ("err", "recover_err")})
         body = (claim_form(s["title"], tok, mode=s["mode"], is_open=s["open"], rows=rows,
-                           guide_url=s["guide_url"], mine=mine, **kw)
-                if allowed else gate_page(s["title"], tok, err=gate_err, mine=mine))
+                           guide_url=s["guide_url"], mine=mine, lang=lang, **kw)
+                if allowed else gate_page(s["title"], tok, err=tr(lang, gate_err), mine=mine,
+                                          lang=lang))
         self._send(code, body, extra=[("Set-Cookie", f"csrf={tok}; Path=/{self._flags()}")])
 
     def _redirect(self, location: str, cookie: str | None = None) -> None:
@@ -616,10 +660,10 @@ class Handler(BaseHTTPRequestHandler):
         if path == "/privacy":
             con = connect(self.db_path)
             try:
-                title = claims.settings(con)["title"]
+                st = claims.settings(con)
             finally:
                 con.close()
-            return self._send(200, privacy_page(title))
+            return self._send(200, privacy_page(st["title"], language(st["language"])))
         if path.startswith("/static/"):
             name = path[len("/static/"):]
             if name in STATIC_FILES:  # fixed allow-list: no path handling at all
@@ -640,9 +684,13 @@ class Handler(BaseHTTPRequestHandler):
                 if self.limiter.over(self._ip()):
                     return self._slow_down()
                 self.limiter.fail(self._ip())
-                return self._send(404, _page("Link not valid", "<p><a class=btn href=/>Claim a lab</a></p>",
-                                             heading="Link not valid",
-                                             sub="This link was released or never existed."))
+                lang = self._lang()
+                t = partial(tr, lang)
+                return self._send(404, _page(t("Link not valid"),
+                                             f"<p><a class=btn href=/>{t('Claim a lab')}</a></p>",
+                                             heading=t("Link not valid"),
+                                             sub=t("This link was released or never existed."),
+                                             lang=lang))
             if m.group(2):
                 key = (json.loads(row["data"] or "{}").get("ssh") or {}).get("private_key")
                 if not key or not row["ready"]:
@@ -656,7 +704,8 @@ class Handler(BaseHTTPRequestHandler):
                 con.close()
             csrf = self._csrf() or secrets.token_urlsafe(16)
             return self._send(200, lab_page(row, m.group(1), title=st["title"],
-                                            guide_url=st["guide_url"], csrf=csrf),
+                                            guide_url=st["guide_url"], csrf=csrf,
+                                            lang=language(st["language"])),
                               extra=[("Set-Cookie", self._lab_cookie(m.group(1))),
                                      ("Set-Cookie", f"csrf={csrf}; Path=/{self._flags()}")])
         m = re.fullmatch(r"/admin/([^/]+)(?:/key/([A-Za-z0-9_.-]+))?", path)
@@ -667,7 +716,7 @@ class Handler(BaseHTTPRequestHandler):
             try:
                 if not claims.is_admin_token(con, m.group(1)):
                     self.limiter.fail(self._ip())
-                    return self._send(404, _page("Not found", "", heading="Not found"))
+                    return self._not_found()
                 labs = claims.lab_data(con)
                 if m.group(2):
                     key = (labs.get(m.group(2), {}).get("ssh") or {}).get("private_key")
@@ -681,7 +730,7 @@ class Handler(BaseHTTPRequestHandler):
                                                   progress_at=prog_at))
             finally:
                 con.close()
-        self._send(404, _page("Not found", "", heading="Not found"))
+        self._not_found()
 
     def _read_form(self) -> dict[str, str] | None:
         try:
