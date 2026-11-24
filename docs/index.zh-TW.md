@@ -2,6 +2,9 @@
 title: rodeo-cli
 ---
 
+!!! note "社群翻譯"
+    這是社群維護的繁體中文翻譯，內容以 [英文官方文件](https://avaleror.github.io/rodeo-cli/) 為準。如果中英文有出入，請以英文版為準。
+
 <div class="rc-hero" markdown>
 <div class="rc-eyebrow">// 宣告式 lab 部署</div>
 
