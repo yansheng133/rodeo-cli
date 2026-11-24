@@ -30,7 +30,7 @@ rodeo status --output json
 
 ---
 
-## 需要操作者機密或其他 UI 的 lab { #labs-with-operator-secrets-or-other-uis }
+## 需要操作者 secret 或其他 UI 的 lab { #labs-with-operator-secrets-or-other-uis }
 
 有些 lab 需要只有你才有的值（lab 的 `operator_secrets`，例如 SCC
 regcode 或預先建好的映像網址）。把它們列在 `workshop.yaml` 裡：`fleet deploy`
@@ -65,7 +65,7 @@ Fleet **尚未**推出的部分。完整檢查清單：[ROADMAP Phase I](https:/
 | **F4c** | **Vultr Bare Metal**（`[vultr]` extra） | 規劃中：排在 GCP 之後；用實體機跑 nested KVM |
 | **F4d** | **Hetzner Cloud**（`hcloud`） | 規劃中：排在 Vultr 之後；nested KVM 必須先驗證 |
 
-**不在範圍內：** Equinix Metal（服務已終止）。跨主機共用機密。
+**不在範圍內：** Equinix Metal（服務已終止）。跨主機共用 secret。
 為多主機修改 nested 階段 engine。
 
 **MVP 缺口（AWS）：** 還沒有 `plan` dry-run；自動 SG 之後再做。
@@ -233,7 +233,7 @@ rodeo fleet access -f workshop.yaml --output json
 除非加上 `--force`。`apply` 階段永遠不會被快取（每次本機部署都會重跑），
 也不會擋住這項檢查。
 
-機密：由遠端 `rodeo up` **為每台主機**各自產生，fleet 絕不會 scp 一份共用的
+ secret：由遠端 `rodeo up` **為每台主機**各自產生，fleet 絕不會 scp 一份共用的
 `secrets.yaml`。
 
 ### 工作檔 { #job-file }
@@ -306,7 +306,7 @@ rodeo fleet diagnose -f workshop.yaml -o /tmp/diag --output json
 | `summary.json` | 該主機的簡短失敗摘要 |
 | `index.json` | 整個 workshop 的索引（使用 `--output json` 時也會印出） |
 
-不會印出或收集機密。收集成功時結束碼為 `0`；任何主機的 SSH
+不會印出或收集 secret。收集成功時結束碼為 `0`；任何主機的 SSH
 或封存解壓縮失敗時為 `1`。
 
 ### 存取表 { #access-sheet }
@@ -517,7 +517,7 @@ Fleet **不會**在筆電上以 sudo 重新執行自己。
 - 並行數預設值：doctor/status 為 `-j 8`；deploy/retry 使用 `lab.concurrency`
   （預設 4），除非指定了 `-j`。deploy 建議使用低並行數（ISO／網路）。
 - F4 取得主機請見[規劃](#roadmap)。Equinix 不在範圍內。
-  共用機密與修改階段 pipeline 仍然不屬於 Fleet。
+  共用 secret 與修改階段 pipeline 仍然不屬於 Fleet。
 
 ---
 
@@ -585,7 +585,7 @@ GCP 使用 label（DNS-1123）；在雲端要求的地方把 key 轉成小寫，
 **Protocol 的非目標**
 
 - 不做跨雲端的「通用機型」列舉：規格／映像維持各 provider 專屬。
-- F4 不做共用機密／AMI 發布 pipeline。
+- F4 不做共用 secret／AMI 發布 pipeline。
 - 預設路徑不需要 Libcloud／OpenTofu。
 
 ### `workshop.yaml` 的 `provider:` schema { #workshopyaml-provider-schema }

@@ -117,7 +117,7 @@ parameters:
 | `suse-virt` | Harvester HCI（含或不含 Rancher） | `kvm_host` → `vms` → `pxe_server` → `cluster` → `rancher` → `apply` → `finalise` → `custom_scripts` |
 | `rancher`、`rancher-test` | K3s 上的 Rancher Prime + 它建立的 K3s/RKE2 叢集 | `kvm_host` → `vms` → `boot` → `rancher` → `downstream` → `apply` → `finalise` → `custom_scripts` |
 | `suse-edge` | SUSE Edge 3.7（Rancher + Elemental + EIB + edge 節點） | `kvm_host` → `vms` → `boot` → `rancher` → `elemental` → `apply` → `finalise` → `custom_scripts` |
-| `lab-in-a-box` | 外部插件：由 lab-in-a-box 引擎建立 lab | 它自己的階段（請見該插件的文件） |
+| `lab-in-a-box` | 外部外掛：由 lab-in-a-box 引擎建立 lab | 它自己的階段（請見該外掛的文件） |
 
 **必填。**沒有預設值。
 
@@ -137,7 +137,7 @@ parameters:
 
 | `remote` | 控制端：部署到你已經擁有的 KVM 主機。需要 `remote_host:` 區塊，會透過 SSH 把 lab 的 plan 檔案送過去，並在主機上執行 `rodeo up --target baremetal`。不會建立任何資源，`rodeo destroy --cloud` 也不適用：主機是你的。 |
 
-**必填。**省略時預設為 `baremetal`。插件可以透過
+**必填。**省略時預設為 `baremetal`。外掛可以透過
 `host_context.register_host_context()` 新增目標（請見架構文件的擴充點）：
 註冊過的目標在這裡、在 `--target`，以及在
 `rodeo up` 的提示中都會被接受。
@@ -552,7 +552,7 @@ profile 結構中的 `checks/` 與 `custom/scripts/`：
   在主機上、從該目錄執行，使用的環境與 profile 自己的
   `custom/scripts/` 相同（`KUBECONFIG`、`RODEO_PLAN_NAME`、`RODEO_CONFIG_DIR`、
   `RODEO_LAB_DIR`），另外加上 `RODEO_CONTENT_DIR`，也就是抓下來的 repository。它們在
-  每次 apply 時都會執行，所以請寫成 idempotent（可重複執行）。每個腳本都會印出自己的輸出；某個腳本失敗
+  每次 apply 時都會執行，所以請寫成 可重複執行。每個腳本都會印出自己的輸出；某個腳本失敗
   不會讓其他腳本停止，但 `rodeo content apply` 最後會以 1 結束。
 
 腳本以執行 rodeo 的使用者身分執行（在 `rodeo up` 底下是 root），內容取自
@@ -574,7 +574,7 @@ profile 內的 `story/` 都照舊運作。
 ## lab_in_a_box：用 lab-in-a-box 部署，或匯出成 lab-in-a-box { #lab_in_a_box-deploying-with-or-exporting-to-lab-in-a-box }
 
 [lab-in-a-box](https://github.com/SUSE-Technical-Marketing/lab-in-a-box) 會從
-`lab.json` 建立 VM 並執行插件（SUSE Multi-Linux Manager、Uyuni、NeuVector……）。rodeo 會從 plan 與 definition 渲染出這個檔案，
+`lab.json` 建立 VM 並執行外掛（SUSE Multi-Linux Manager、Uyuni、NeuVector……）。rodeo 會從 plan 與 definition 渲染出這個檔案，
 而 plan 與 definition 仍然是唯一的資料來源。用法有兩種：
 
 - `type: lab-in-a-box` 透過它部署。rodeo 會準備主機（套件、
@@ -609,12 +609,12 @@ lab_in_a_box:
   cluster_type: k3s                     # k3s（預設） | rke2
   clu_rel: stable                       # 安裝 channel，精確的版本固定不會帶過去
   addons: [rancher]                     # 覆寫推導出來的 kcluster install_<addon> 清單
-  sections:                             # 原樣放入 lab.json 的區段（插件設定）
+  sections:                             # 原樣放入 lab.json 的區段（外掛設定）
     smlm: {smlm_deployment: podman, smlm_admin_pass: "??smlm_admin_password"}
 ```
 
 **lab 本身：**`lab_in_a_box.lab` 也可以改為放一整個 lab-in-a-box lab
-（`common`、以 FQDN 為 key 的 `nodes`、`kclusters`、每個插件一個區段），也就是
+（`common`、以 FQDN 為 key 的 `nodes`、`kclusters`、每個外掛一個區段），也就是
 lab-in-a-box lab-builder 編輯的格式。rodeo 會照原樣部署它，只設定
 屬於主機的部分：common 的網路 key 與 `lab_name`、每個節點的
 `BRIDGE`、`myip`、`mymac` 與 FQDN 網域、kcluster 的 `mydomain`、映像
@@ -622,7 +622,7 @@ lab-in-a-box lab-builder 編輯的格式。rodeo 會照原樣部署它，只設�
 `definition.yaml` 有列出的節點會保留該位址，其他節點則在 lab 網路中
 使用其 `myip` 的主機部分（若該位址空著，否則使用下一個空位址）；lab 沒有列出的
 definition 節點不會被部署。上面的 `nodes` 與 `sections`，以及變體中的同名設定，
-都會合併進去。在插件區段中以 `${node_fqdn:<vm>}` /
+都會合併進去。在外掛區段中以 `${node_fqdn:<vm>}` /
 `${node_ip:<vm>}` 引用 VM。`smlm-workshop` 就是用這種方式帶著它的 lab。
 `rodeo new <name> --from-lab-json <file>` 會從既有的 lab 寫出這樣的 plan
 （請見[建立自己的 rodeo](../custom-rodeos.md)）。
@@ -760,7 +760,7 @@ up` 會逐一部署它們，`rodeo instances list` 會列出它們（以及這�
 還放得下幾個），`rodeo instances clean` 則會
 移除它們。
 
-在插件區段中，`${node_fqdn:<vm>}` 與 `${node_ip:<vm>}` 代表該 lab
+在外掛區段中，`${node_fqdn:<vm>}` 與 `${node_ip:<vm>}` 代表該 lab
 自己的節點。`lab_in_a_box.dns_aliases: {<vm>: [name, ...]}` 會在該 instance 的網路中
 為節點加上它會回應的名稱，例如預先建好的伺服器映像安裝時使用的固定名稱。
 

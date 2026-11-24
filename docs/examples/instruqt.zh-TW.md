@@ -109,7 +109,7 @@ rodeo status
 
 - nested VM 不會自動啟動（這是刻意的設計：映像中沒有 finalise）。
 - libvirt 用來重新套用 DNAT + `guest_input` accept 的 qemu hook，只有在真正啟動 VM 時才會可靠地觸發，在 VM 保持「原狀」的 hostimage 冷開機時則不會。
-- `start-if-needed` 可以重複執行（idempotent）：視需要啟動主機服務 + VM，然後強制套用 nft 規則。
+- `start-if-needed` 可以重複執行：視需要啟動主機服務 + VM，然後強制套用 nft 規則。
 
 ```bash
 rodeo start-if-needed

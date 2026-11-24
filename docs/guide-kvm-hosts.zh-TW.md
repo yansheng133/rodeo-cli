@@ -41,4 +41,4 @@ rodeo fleet destroy -f workshop.yaml --yes
 
 ## 你自己的步驟 { #your-own-steps }
 
-用 `rodeo new mylab --from kvm-hosts` 以這個 profile 為基礎建立你自己的 profile，並在它的 `custom/scripts/` 放入編號的腳本，在每台主機上安裝你的軟體。這些腳本會在主機準備好之後、於每次 `rodeo up` 時執行，所以要寫成可重複執行（idempotent）。如果是 fleet，把這個 profile 推到 git repo，再讓 `workshop.yaml` 裡的 `lab.source` 指向它（請見 [Fleet](fleet.md)）。
+用 `rodeo new mylab --from kvm-hosts` 以這個 profile 為基礎建立你自己的 profile，並在它的 `custom/scripts/` 放入編號的腳本，在每台主機上安裝你的軟體。這些腳本會在主機準備好之後、於每次 `rodeo up` 時執行，所以要寫成可重複執行。如果是 fleet，把這個 profile 推到 git repo，再讓 `workshop.yaml` 裡的 `lab.source` 指向它（請見 [Fleet](fleet.md)）。

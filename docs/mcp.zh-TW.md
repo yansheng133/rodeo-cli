@@ -6,7 +6,7 @@
 
 每個工具都是直接執行 rodeo CLI，所以涵蓋的範圍包括 **native** 階段
 pipeline（`suse-virt`、`rancher`、`suse-edge`、`suse-telco`）以及**外部
-engine**（`lab-in-a-box`、插件提供的類型），用的就是操作者
+engine**（`lab-in-a-box`、外掛提供的類型），用的就是操作者
 輸入的同一組指令。
 
 ## 執行 { #run-it }
@@ -177,19 +177,19 @@ Claude Code 有工具組。當 doctor 發現 Gemini CLI 或 Codex CLI 的
 `{"schema": 1, "error": "..."}`。
 
 這個物件不含任何帳密值：`plan` 不會解析任何 `??` 占位符、
-絕不讀取 `secrets.yaml` 或 lab 的機密檔，並會遮蔽 plan 本身
+絕不讀取 `secrets.yaml` 或 lab 的 secret 檔，並會遮蔽 plan 本身
 直接寫入的帳密值，以及網址中任何的 `user:password@`。結束碼
 與文字輸出一致：當部署會拒絕這個 plan 時（不受信任的 lab、
 無效的值）為 2，即使 JSON 已經印出。受信任 lab 中的 `??` 來源
 會延後到部署時處理，不算失敗。
 
-## 插件工具 { #plugin-tools }
+## 外掛工具 { #plugin-tools }
 
-插件（一個 `rodeo.plugins` entry point）透過
+外掛（一個 `rodeo.plugins` entry point）透過
 `rodeo.mcp.tools.register_mcp_tool(tool, mutating=..., lab_scoped=...)` 新增工具。兩個
-旗標都是必填。內建名稱，或已被其他插件使用的名稱，會被拒絕：
-插件不能取代內建工具。會變更狀態的插件工具只在
-加上 `--allow-write` 時提供，而每個插件工具都要經過上述的 lab 清單檢查
+旗標都是必填。內建名稱，或已被其他外掛使用的名稱，會被拒絕：
+外掛不能取代內建工具。會變更狀態的外掛工具只在
+加上 `--allow-write` 時提供，而每個外掛工具都要經過上述的 lab 清單檢查
 （lab 範圍時檢查 `lab_dir`，另外還有每個以 `path="path"` 宣告的 `Arg`）。
 
 ### AWS 上的 `rodeo_up` 會回傳 pid { #rodeo_up-on-aws-returns-a-pid }

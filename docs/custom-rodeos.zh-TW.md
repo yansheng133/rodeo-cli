@@ -46,7 +46,7 @@ lab-in-a-box 安裝好之前連不到）。它也會列出這台機器上的 lab
 
 目前的 engine type：`suse-virt`（Harvester HCI + Rancher）、`rancher` 與
 `rancher-test`（Rancher Prime 加上它建立的 K3s/RKE2 叢集，不含 Harvester），以及
-`suse-edge`（Rancher + Elemental + EIB + edge 節點）。`lab-in-a-box` 是外部插件，
+`suse-edge`（Rancher + Elemental + EIB + edge 節點）。`lab-in-a-box` 是外部外掛，
 有自己的引擎。你的自訂 lab 從中挑一個當作 `type`，其餘部分自行
 自訂。你撰寫的是拓撲，不是新的 pipeline。
 
@@ -67,7 +67,7 @@ rodeo profiles
 | `virt-workshop` | 內建 | suse-virt | `harvester` + 映像快取、NFS 與範例 VM，供 SUSE Virtualization workshop 使用 |
 | `virt-workshop-2n` | 內建 | suse-virt | workshop lab 的兩節點版本 |
 | `suse-edge` | 內建 | suse-edge | Rancher + Elemental + EIB + edge 節點（SUSE Edge 3.7） |
-| `smlm-workshop` | 內建 | lab-in-a-box | SUSE Multi-Linux Manager + 8 台用戶端，由 lab-in-a-box 插件建置 |
+| `smlm-workshop` | 內建 | lab-in-a-box | SUSE Multi-Linux Manager + 8 台用戶端，由 lab-in-a-box 外掛建置 |
 | `kvm-hosts` | 內建 | kvm-hosts | 一般 KVM 主機，不含 VM；搭配 fleet 就是小型 KVM 叢集（[指南](guide-kvm-hosts.md)） |
 | *（你的）* | 自訂 | 任何 | 你產生並編輯的任何內容 |
 

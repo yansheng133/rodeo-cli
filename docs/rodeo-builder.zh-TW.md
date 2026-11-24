@@ -28,7 +28,7 @@ rodeo up --profile <name>     # 在 Save to profiles 之後
 
 ## 你可以組出什麼 { #what-you-compose }
 
-- **Lab engine。** engine 就是已安裝的 rodeo 類型（包含插件提供的）；
+- **Lab engine。** engine 就是已安裝的 rodeo 類型（包含外掛提供的）；
   提供的部署目標與說明文件格式都是 rodeo 認得的那些，
   絕不是固定清單。`suse-virt`、`rancher` 與 `suse-edge`
   是 rodeo 自己的 engine，放在 **native** 卡片底下；`lab-in-a-box`（以及其他任何外部
@@ -368,7 +368,7 @@ builder 以 root 執行，或使用者有免密碼 sudo（`sudo -n true`）。
   profiles and deploy**。
 - 部署會從 `~/rodeo-labs/<name>-unsaved-<UTC time>/` 中的副本執行 `rodeo up --yes --no-tmux --dir <lab>`
   （基礎 profile 加上頁面的檔案，排列方式與 Save 相同），輸出寫到 `<lab>/.builder-deploy.log`。
-  rodeo 能產生的機密會放進 lab 的 `.rodeo-secrets.yaml`；只有你才有的機密
+  rodeo 能產生的 secret 會放進 lab 的 `.rodeo-secrets.yaml`；只有你才有的 secret 
   （`operator_secrets`）會在對話框中詢問，並寫入
   `~/.rodeo/secrets.yaml`，之後不會再顯示。
 - 橫幅中的 **Log** 會在部署執行時保留完整輸出，最多 100000
@@ -418,16 +418,16 @@ root 的 `~/.rodeo/vault/`，也就是 builder 讀取的儲存區。
   （`{name, type, fields, password}`）與 `vault-delete`（`{id, password}`），搭配
   頁面的 `X-Rodeo-Builder-Token`，以及一組依
   `/etc/rodeo-builder/htpasswd` 檢查的 `Authorization: Basic` 登入。沒有登入時會回應 `401`。
-- 在部署對話框中，lab 詢問的每個機密都會提供 **Use stored…**，列出
+- 在部署對話框中，lab 詢問的每個 secret 都會提供 **Use stored…**，列出
   能填入它的帳密。輸入密碼後，頁面會填入那個
-  機密，以及同一份帳密能提供的其他所有機密（AWS 帳密
+   secret，以及同一份帳密能提供的其他所有 secret（AWS 帳密
   會同時填入 `aws_access_key_id` 與 `aws_secret_access_key`）。通用
-  帳密會填入名稱與其欄位名稱相符的機密。
+  帳密會填入名稱與其欄位名稱相符的 secret。
 - 填入的值和手動輸入的值去處相同：放進 `~/.rodeo/secrets.yaml` 供
   `rodeo up` 使用。刪除儲存的帳密不會把它們從那裡移除。
 - 頁面也會列出 root 的 `~/.rodeo/secrets.yaml` 中已有的 key，只有名稱
   而且是唯讀的：`rodeo up` 會直接讀取那個檔案。在部署對話框中，
-  **Use stored…** 會把它們列在 *secrets.yaml* 底下（與機密名稱有共同單字的
+  **Use stored…** 會把它們列在 *secrets.yaml* 底下（與 secret 名稱有共同單字的
   排在前面）。選擇其中一個不需要密碼，並會鎖住輸入欄
   （「from secrets.yaml: <key>」，按 **Clear** 可改為手動輸入）；builder 會在它的主機上複製
   這個值，所以它絕不會傳到瀏覽器。

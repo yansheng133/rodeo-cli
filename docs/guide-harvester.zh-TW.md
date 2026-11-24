@@ -180,7 +180,7 @@ rodeo status                      # 查看哪個階段失敗
 rodeo deploy --from cluster       # 從那個階段接續
 ```
 
-部署 pipeline 在同一個階段內可以重複執行（idempotent）。如果 `cluster` 階段在等待節點時逾時，接續之前先查看 serial 日誌（`rodeo logs harvester1`）找出根本原因。
+部署 pipeline 在同一個階段內可以重複執行。如果 `cluster` 階段在等待節點時逾時，接續之前先查看 serial 日誌（`rodeo logs harvester1`）找出根本原因。
 
 ### Rancher UI extension { #rancher-ui-extensions }
 

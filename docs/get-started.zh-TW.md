@@ -56,7 +56,7 @@
 | `harvester` | 三節點 Harvester HCI + Rancher | 約 72 GiB |
 | `virt-workshop` | `harvester` + 映像快取、NFS 與範例 VM，供 SUSE Virtualization workshop 使用 | AWS `m8id.8xlarge` |
 | `suse-edge` | Rancher + Elemental + EIB + edge 節點 | 約 40 GiB |
-| `smlm-workshop` | SUSE Multi-Linux Manager workshop（lab-in-a-box 插件） | 約 30 GiB |
+| `smlm-workshop` | SUSE Multi-Linux Manager workshop（lab-in-a-box 外掛） | 約 30 GiB |
 
 完整的操作說明請見各 profile 指南：[Rancher Prime](guide-rancher.md)、[Harvester HCI](guide-harvester.md)、[SUSE Edge](guide-suse-edge.md)。
 

@@ -23,7 +23,7 @@ rodeo deploy --from kvm_host --force   # 從 kvm_host 階段開始全部重跑
 
 **回顧某次執行：** 每次部署都會把事件附加到
 `<lab>/.rodeo/events.jsonl`（權限 0600），每行一個 JSON 物件，已知的
-機密值會被遮蔽：
+secret 值會被遮蔽：
 
 ```bash
 jq -r 'select(.kind=="PhaseFailed") | "\(.phase) rc=\(.rc) \(.text)"' .rodeo/events.jsonl
@@ -147,14 +147,14 @@ rodeo deploy --from kvm_host --force   # 重新安裝 hook
 
 ---
 
-## 機密無法解析 { #secrets-not-resolved }
+## secret 無法解析 { #secrets-not-resolved }
 
 **症狀：** 部署立即失敗，顯示 `unresolved credential` 或 `empty password`。
 
 **修正：**
 
 ```bash
-# 重新產生機密
+# 重新產生 secret
 rodeo init --force
 # 然後重試部署
 rodeo deploy --from kvm_host --force
@@ -349,7 +349,7 @@ rodeo up --profile <name>
 rodeo logs --bundle -o rodeo-bundle.tar.gz
 ```
 
-套件包含：遮蔽過的 plan（機密以 `***` 取代）、階段狀態、所有 VM 最近的 serial log 結尾，以及 `virsh` domain 資訊。回報 bug 或向維護者升級處理時，請附上這個套件。
+套件包含：遮蔽過的 plan（secret 以 `***` 取代）、階段狀態、所有 VM 最近的 serial log 結尾，以及 `virsh` domain 資訊。回報 bug 或向維護者升級處理時，請附上這個套件。
 
 ---
 
