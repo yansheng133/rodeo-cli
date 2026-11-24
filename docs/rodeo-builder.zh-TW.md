@@ -1,6 +1,6 @@
 # Rodeo Builder
 
-**[→ 開啟 Rodeo Builder](../builder/){ .md-button .md-button--primary }**
+**[→ 開啟 Rodeo Builder](../../builder/){ .md-button .md-button--primary }**
 
 Rodeo Builder 讓你在瀏覽器中組出一個新的 rodeo：選擇 lab engine、排好
 story 章節的順序、為章節文字加上翻譯標記與 story id，然後把結果
