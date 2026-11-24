@@ -21,8 +21,15 @@ def _function(name: str) -> str:
     return m.group(0)
 
 
-def _run(tmp_path: Path, *, cloud: bool, repos_after: int) -> tuple[subprocess.CompletedProcess, int]:
-    """repos_after: zypper lr -E succeeds from this call on (0 = never)."""
+def _run(tmp_path: Path, *, cloud: bool, repos_after: int, before: str = "undefined") -> tuple[subprocess.CompletedProcess, int]:
+    """repos_after: zypper lr -E lists an enabled repo from this call on (0 = never).
+
+    before: what zypper does until then -- "undefined" (no repo files: warns and
+    exits 6, the state seen right after boot) or "disabled" (repos exist but none
+    is enabled: warns and still exits 0).
+    """
+    not_yet = ("echo 'Warning: No repositories defined.' >&2\nexit 6\n" if before == "undefined"
+               else "echo 'Warning: No repositories defined.' >&2\nexit 0\n")
     bin_dir = tmp_path / "bin"
     bin_dir.mkdir()
     calls = tmp_path / "calls"
@@ -35,8 +42,13 @@ def _run(tmp_path: Path, *, cloud: bool, repos_after: int) -> tuple[subprocess.C
         "#!/bin/bash\n"
         f"echo x >> {calls}\n"
         f"n=$(wc -l < {calls})\n"
-        f"[[ {repos_after} -gt 0 && $n -ge {repos_after} ]] && exit 0\n"
-        "exit 6\n"
+        f"if [[ {repos_after} -gt 0 && $n -ge {repos_after} ]]; then\n"
+        "  echo '#  | Alias    | Name     | Enabled | GPG Check | Refresh'\n"
+        "  echo '---+----------+----------+---------+-----------+--------'\n"
+        "  echo ' 1 | repo-oss | repo-oss | Yes     | (r ) Yes  | Yes'\n"
+        "  exit 0\n"
+        "fi\n"
+        + not_yet
     )
     (bin_dir / "sleep").write_text("#!/bin/bash\nexit 0\n")
     for f in bin_dir.iterdir():
@@ -50,6 +62,15 @@ def _run(tmp_path: Path, *, cloud: bool, repos_after: int) -> tuple[subprocess.C
 
 def test_waits_until_cloud_registration_adds_a_repo(tmp_path):
     r, polls = _run(tmp_path, cloud=True, repos_after=3)
+    assert r.returncode == 0
+    assert polls == 3
+    assert "Waiting for the cloud update server" in r.stdout
+
+
+def test_waits_while_repos_are_defined_but_none_is_enabled(tmp_path):
+    # zypper exits 0 with "No repositories defined" when every repo is disabled;
+    # the exit code alone must not end the wait.
+    r, polls = _run(tmp_path, cloud=True, repos_after=3, before="disabled")
     assert r.returncode == 0
     assert polls == 3
     assert "Waiting for the cloud update server" in r.stdout
