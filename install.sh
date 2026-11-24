@@ -167,7 +167,9 @@ wait_for_zypper_repos() {
   local tries="${RODEO_REPO_WAIT_TRIES:-60}" secs="${RODEO_REPO_WAIT_SECS:-5}" i
   systemctl list-unit-files guestregister.service 2>/dev/null | grep -q guestregister || return 0
   for ((i = 1; i <= tries; i++)); do
-    zypper --non-interactive lr -E >/dev/null 2>&1 && return 0
+    # Count enabled repo rows: zypper exits 0 with "No repositories defined"
+    # when repos exist but none is enabled, so the exit code is not enough.
+    zypper --non-interactive lr -E 2>/dev/null | grep -qE '^ *[0-9]+ *\|' && return 0
     [[ $i -eq 1 ]] && echo "==> Waiting for the cloud update server to add zypper repositories"
     sleep "$secs"
   done
