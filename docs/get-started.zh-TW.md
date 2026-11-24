@@ -1,12 +1,12 @@
 # 開始使用
 
-## 主機需求
+## 主機需求 { #host-requirements }
 
 你需要一台 Linux 主機（建議 SLES 16 / Leap 16），可使用 nested KVM、有 root 或免密碼 sudo 權限，並有足夠的記憶體跑你選的 profile，請見下表。
 
 如果要從筆電（macOS 或其他 Linux）操作遠端或雲端主機，同一支 `install.sh` 會把 rodeo 安裝成控制端：請見[在 Linux 與 macOS 上安裝](install.md)。
 
-## 安裝
+## 安裝 { #install }
 
 <div class="rc-terminal" markdown>
 <div class="rc-terminal-bar">
@@ -18,7 +18,7 @@
 
 在 SLES 16 / Leap 16 上，這會把 rodeo 安裝成 KVM 主機：它會 clone repo、在內部建好 Python 環境，並把 `rodeo` 連結成系統指令。不用啟用 venv、不用設定 PATH，也不用加 sudo。在筆電上則會安裝成控制端，請見[安裝](install.md)。
 
-## 部署
+## 部署 { #deploy }
 
 <div class="rc-terminal" markdown>
 <div class="rc-terminal-bar">
@@ -44,7 +44,7 @@
 <span class="rc-cmd">$</span> rodeo up --profile suse-edge      <span class="rc-val"># Rancher + Elemental + EIB + edge 節點</span></div>
 </div>
 
-## 選擇 profile
+## 選擇 profile { #pick-a-profile }
 
 | Profile | 建出的環境 | RAM |
 |---|---|---|
@@ -60,7 +60,7 @@
 
 完整的操作說明請見各 profile 指南：[Rancher Prime](guide-rancher.md)、[Harvester HCI](guide-harvester.md)、[SUSE Edge](guide-suse-edge.md)。
 
-## Day-2 維運
+## Day-2 維運 { #day-2-operations }
 
 lab 建好之後，它是一個你要持續維運的環境，不是跑一次就丟的腳本：
 
@@ -76,11 +76,11 @@ lab 建好之後，它是一個你要持續維運的環境，不是跑一次就�
 <span class="rc-cmd">$</span> rodeo clean               <span class="rc-val"># 拆除整套 lab</span></div>
 </div>
 
-## 想要內建以外的 lab？
+## 想要內建以外的 lab？ { #want-a-lab-that-isnt-bundled }
 
 <code>rodeo new mylab --from harvester</code> 會在 `~/.rodeo/profiles/mylab` 產生一份可編輯的 profile。修改 YAML 後執行 `rodeo up --profile mylab`，lab 就會收斂成新的樣子。請見[建立自己的 rodeo](custom-rodeos.md)。
 
-## 從筆電部署到 AWS
+## 從筆電部署到 AWS { #on-aws-from-your-laptop }
 
 在筆電（macOS 或任何 Linux）用同一支 `install.sh` 安裝 rodeo，登入 AWS 後部署：
 
@@ -93,10 +93,10 @@ rodeo up --profile harvester --target aws --yes
 
 每台雲端主機都有 **6 小時自動銷毀計時（dead-man switch）**：時間到會關機，接著由 AWS 終止。需要更長的時段請設定 `provider.ttl_hours`；要提早拆除，執行 `rodeo destroy --cloud --yes --config-dir ~/rodeo-labs/<profile>`。請見 [provider 欄位](reference/plan.md#provider-when-deployment_target-aws)。
 
-## 多台主機（workshop fleet）
+## 多台主機（workshop fleet） { #many-hosts-workshop-fleet }
 
 要讓整間教室都跑**同一套** lab，請用 `rodeo fleet` 搭配 `workshop.yaml` 清單。在 AWS 上，`rodeo fleet provision` 會為每位學員建立一台主機；`deploy` 會平行建好每一套 lab，`status`、`doctor`、`retry` 與 `diagnose` 都可以針對單一 lab 執行。學員可以透過領取入口，用 workshop 代碼領到自己的 lab。請見 [Fleet](fleet.md)。
 
-## 遇到問題？
+## 遇到問題？ { #something-not-working }
 
 請查看[故障排除手冊](runbook.md)，裡面涵蓋部署卡住、Harvester 安裝逾時、VIP 連不到，以及其他在實機上遇過的問題。

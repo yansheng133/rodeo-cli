@@ -13,7 +13,7 @@
 
 ---
 
-## 你會得到什麼
+## 你會得到什麼 { #what-you-get }
 
 | 元件 | 預設 IP | Port |
 |-----------|-----------|------|
@@ -30,7 +30,7 @@
 
 ---
 
-## 主機需求
+## 主機需求 { #host-requirements }
 
 | 資源 | 最低需求 |
 |----------|---------|
@@ -44,7 +44,7 @@
 
 ---
 
-## 部署
+## 部署 { #deploy }
 
 ```bash
 rodeo up --profile rancher        # 或：rodeo up --profile rancher-test
@@ -60,7 +60,7 @@ rodeo up --profile rancher        # 或：rodeo up --profile rancher-test
 rodeo up --profile rancher --yes    # 略過所有確認提示
 ```
 
-### 部署過程中會發生什麼
+### 部署過程中會發生什麼 { #what-happens-during-deploy }
 
 流程依序執行以下階段：
 
@@ -75,7 +75,7 @@ rodeo up --profile rancher --yes    # 略過所有確認提示
 
 ---
 
-## 登入
+## 登入 { #log-in }
 
 `rodeo up` 完成後會印出 Rancher 網址與帳密。之後要再查的話：
 
@@ -91,7 +91,7 @@ rodeo status
 
 ---
 
-## Day-2 維運
+## Day-2 維運 { #day-2-operations }
 
 | 工作 | 指令 |
 |------|---------|
@@ -105,7 +105,7 @@ rodeo status
 | 刪除整套 lab | `rodeo clean --yes` |
 | 完整重置主機 | `rodeo clean --all --yes --secrets` |
 
-### 從失敗的地方接續部署
+### 從失敗的地方接續部署 { #resume-a-failed-deploy }
 
 ```bash
 rodeo status                    # 找出最後失敗的階段
@@ -114,13 +114,13 @@ rodeo deploy --from rancher     # 從該階段接續
 
 ---
 
-## Instruqt 流程
+## Instruqt 流程 { #instruqt-workflow }
 
 部署前在 `rodeo-plan.yaml` 設定 `deployment_target: instruqt`，讓 `finalise` 被略過。**不要**把 `finalise` 做進 hostimage（自動啟動可能讓 Instruqt agent 或 console 卡住）。部署完成後，照成功畫面上的檢查清單操作、儲存 hostimage，並在 track 的 setup script 裡加上 **`rodeo start-if-needed`**，讓 lab 每次開機都會啟動。請見 [Instruqt 範例](examples/instruqt.md)。
 
 ---
 
-## 自訂
+## 自訂 { #customize }
 
 所有設定都在 `~/.rodeo/profiles/rancher/`（若用 `--profile` 部署）或你本機的 lab 目錄。
 
