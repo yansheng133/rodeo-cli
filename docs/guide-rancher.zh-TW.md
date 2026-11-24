@@ -87,7 +87,7 @@ rodeo status
 - **帳號：** `admin`
 - **密碼：** `~/.rodeo/secrets.yaml` 裡 `rancher_admin_password` 的值
 
-第一次登入時會要求確認 server URL。請填主機 IP（`rodeo status` 顯示的那個），不要填 `localhost`。
+如果第一次登入時要求確認 server URL，請填主機 IP（`rodeo status` 顯示的那個），不要填 `localhost`。在 AWS 上由 rodeo 部署的 Rancher 已經設定好 server URL，登入後直接進入首頁；從 Mac 部署到 AWS 時，網址與帳密要用 `rodeo status --cloud` 查。
 
 ---
 

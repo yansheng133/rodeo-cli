@@ -67,7 +67,7 @@ aws login
 aws sts get-caller-identity
 ```
 
-第一次執行時，如果沒有設定預設 region，`aws login` 會詢問：輸入 `eu-north-1`，也就是 rodeo 使用的 region。接著它會開啟一個瀏覽器頁面讓你確認。`get-caller-identity` 會顯示帳號與角色：建立任何資源之前先確認。session 最長持續 12 小時，視角色而定。過期時，再執行一次 `aws login`。IAM principal 需要 `SignInLocalDevelopmentAccess` managed policy（root 使用者不需要）。
+第一次執行時，如果沒有設定預設 region，`aws login` 會詢問：輸入 `eu-north-1`，也就是 rodeo 使用的 region。接著它會開啟一個瀏覽器頁面讓你確認。`get-caller-identity` 會顯示帳號與角色：建立任何資源之前先確認。session 最長持續 12 小時，視角色而定。過期時，再執行一次 `aws login`。如果你的帳號是用 IAM Identity Center（SSO）登入，改用 `aws sso login --profile <名稱>`，再 `export AWS_PROFILE=<名稱>`：rodeo 會用這個 profile。IAM principal 需要 `SignInLocalDevelopmentAccess` managed policy（root 使用者不需要）。
 
 第一次登入後，較新版本的 AWS CLI 會詢問是否要為 AI coding agent 設定 AWS skills 與 AWS MCP server。lab 不需要這些：每個提示都回答 `n`。
 
@@ -77,7 +77,7 @@ aws sts get-caller-identity
 rodeo up --profile rancher --target aws --yes
 ```
 
-rodeo 會挑選 region（`eu-north-1`，或 `$RODEO_AWS_REGION`）、預設 VPC 的公開 subnet，以及這個 profile 建議的執行個體，並把它們寫進 lab plan。它會建立一把 SSH 金鑰，以及一個只允許你目前公開 IP 的 security group，啟動主機，然後在主機上的 tmux 裡建置 lab。最後會印出 Rancher 網址與帳密。`rancher` 預計需要 20 到 40 分鐘。
+rodeo 會挑選 region（`eu-north-1`，或 `$RODEO_AWS_REGION`）、預設 VPC 的公開 subnet，以及這個 profile 建議的執行個體，並把它們寫進 lab plan。它會建立一把 SSH 金鑰，以及一個只允許你目前公開 IP 的 security group，啟動主機，然後在主機上的 tmux 裡建置 lab。最後會印出 Rancher 網址、自動銷毀時間與拆除指令；帳密不會在這裡印出，請見步驟 7。`rancher` 預計需要 20 到 40 分鐘。
 
 它在本機建立的檔案：
 
@@ -95,7 +95,7 @@ rodeo 會挑選 region（`eu-north-1`，或 `$RODEO_AWS_REGION`）、預設 VPC 
 - 使用者：`admin`
 - 密碼：`~/.rodeo/secrets.yaml` 裡的 `rancher_admin_password`
 
-`rodeo status` 會再印一次。第一次登入時，用主機 IP 確認 server URL。SSH 與 day-2 指令請見 [Rancher profile 指南](../guide-rancher.md#day-2-operations)。從 `~/rodeo-labs/rancher` 執行它們，或加上 `--config-dir ~/rodeo-labs/rancher`。
+在 Mac 上要用 `rodeo status --cloud`（在 `~/rodeo-labs/rancher` 執行，或加上 `--config-dir ~/rodeo-labs/rancher`）：它會連到 AWS 主機，印出 Rancher 網址與帳密。不加 `--cloud` 的 `rodeo status` 查的是本機的 libvirt，在 Mac 上只會顯示每個階段都還沒完成。rodeo 部署的 Rancher 已經設定好 server URL，登入後會直接進入首頁。SSH 與 day-2 指令請見 [Rancher profile 指南](../guide-rancher.md#day-2-operations)。從 `~/rodeo-labs/rancher` 執行它們，或加上 `--config-dir ~/rodeo-labs/rancher`。
 
 ## 步驟 8：拆除 { #step-8-tear-down }
 
