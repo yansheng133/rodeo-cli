@@ -158,10 +158,28 @@ if [[ $DEV -eq 1 ]] && [[ -f "$RODEO_DIR/pyproject.toml" ]]; then
   NEED_GIT=0
 fi
 
+# SLES PAYG images on a public cloud register with the cloud's update server
+# (guestregister.service / registercloudguest) about a minute after boot. Until
+# then zypper has no enabled repository, and installing fails with "No
+# repositories defined" — seen on a fresh EC2 host that `rodeo up --target aws`
+# bootstrapped immediately. Wait for an enabled repo, only on such images.
+wait_for_zypper_repos() {
+  local tries="${RODEO_REPO_WAIT_TRIES:-60}" secs="${RODEO_REPO_WAIT_SECS:-5}" i
+  systemctl list-unit-files guestregister.service 2>/dev/null | grep -q guestregister || return 0
+  for ((i = 1; i <= tries; i++)); do
+    zypper --non-interactive lr -E >/dev/null 2>&1 && return 0
+    [[ $i -eq 1 ]] && echo "==> Waiting for the cloud update server to add zypper repositories"
+    sleep "$secs"
+  done
+  echo "No enabled zypper repository after $((tries * secs))s; installing anyway" >&2
+  return 0
+}
+
 # ── 1. prereqs ────────────────────────────────────────────────────────────────
 if [[ "$RODEO_MODE" == "kvm-host" ]]; then
   echo "==> Installing prerequisites"
   if command -v zypper &>/dev/null; then
+    wait_for_zypper_repos
     if [[ $NEED_GIT -eq 1 ]]; then
       zypper --non-interactive install --no-recommends -y python3 python3-pip git
     else
