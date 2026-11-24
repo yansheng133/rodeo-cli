@@ -420,7 +420,7 @@ root 的 `~/.rodeo/vault/`，也就是 builder 讀取的儲存區。
   `/etc/rodeo-builder/htpasswd` 檢查的 `Authorization: Basic` 登入。沒有登入時會回應 `401`。
 - 在部署對話框中，lab 詢問的每個 secret 都會提供 **Use stored…**，列出
   能填入它的帳密。輸入密碼後，頁面會填入那個
-   secret，以及同一份帳密能提供的其他所有 secret（AWS 帳密
+  secret，以及同一份帳密能提供的其他所有 secret（AWS 帳密
   會同時填入 `aws_access_key_id` 與 `aws_secret_access_key`）。通用
   帳密會填入名稱與其欄位名稱相符的 secret。
 - 填入的值和手動輸入的值去處相同：放進 `~/.rodeo/secrets.yaml` 供

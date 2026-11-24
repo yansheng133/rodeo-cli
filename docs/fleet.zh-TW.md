@@ -233,7 +233,7 @@ rodeo fleet access -f workshop.yaml --output json
 除非加上 `--force`。`apply` 階段永遠不會被快取（每次本機部署都會重跑），
 也不會擋住這項檢查。
 
- secret：由遠端 `rodeo up` **為每台主機**各自產生，fleet 絕不會 scp 一份共用的
+secret：由遠端 `rodeo up` **為每台主機**各自產生，fleet 絕不會 scp 一份共用的
 `secrets.yaml`。
 
 ### 工作檔 { #job-file }
