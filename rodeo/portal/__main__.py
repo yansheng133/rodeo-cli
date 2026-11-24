@@ -13,6 +13,7 @@ import sys
 
 from . import claims
 from .db import connect, db_path, migrate
+from .i18n import LANGUAGES
 
 
 def _admin(args: argparse.Namespace) -> int:
@@ -25,7 +26,8 @@ def _admin(args: argparse.Namespace) -> int:
         if cmd == "init":
             before = claims.get_setting(con, "code_letters")
             claims.ensure_defaults(con, mode=args.mode, title=args.title or "",
-                                   code_letters=args.code_letters, guide_url=args.guide_url)
+                                   code_letters=args.code_letters, guide_url=args.guide_url,
+                                   language=args.language)
             if before is not None and int(before) != args.code_letters:
                 claims.rotate_code(con)  # a longer code only helps once it replaces the old one
             with claims.write_tx(con):
@@ -97,6 +99,7 @@ def main(argv: list[str] | None = None) -> int:
     init.add_argument("--mode", choices=claims.MODES, default="both")
     init.add_argument("--title", default="")
     init.add_argument("--guide-url", default=None, help='workshop guide link ("" removes it)')
+    init.add_argument("--language", choices=LANGUAGES, default=None, help="student page language")
     init.add_argument("--code-letters", type=int, default=claims.CODE_LETTERS_DEFAULT,
                       choices=range(claims.CODE_LETTERS_MIN, claims.CODE_LETTERS_MAX + 1))
     for name in ("import", "progress", "status", "export", "info", "open", "close", "rotate-code",

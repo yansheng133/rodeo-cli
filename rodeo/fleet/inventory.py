@@ -34,6 +34,8 @@ class FleetHost:
 
 
 _VALID_PORTAL_MODES = frozenset({"open", "roster", "both"})
+# Mirrors rodeo/portal/i18n.py LANGUAGES (the portal package stays self-contained).
+_VALID_PORTAL_LANGUAGES = ("en", "zh-TW")
 PORTAL_HOST_ID = "portal"
 # Host ids end up in file names (student keys, known_hosts), HTTP headers and the
 # portal database; hostnames end up in the Caddyfile. Fail closed on anything else.
@@ -58,6 +60,7 @@ class PortalConfig:
     title: str = ""
     code_letters: int = 6  # random letters in RODEO-XXXXXX-YYYYMMDD (4-8)
     guide_url: str = ""  # workshop guide link on every student page (https URL or /path)
+    language: str = "en"  # student pages: en | zh-TW (the instructor page stays English)
     hostname: str | None = None  # default portal-<ip-dashed>.sslip.io
     instance_type: str | None = None
     host: str | None = None  # BYO portal machine (user@ip): skips provisioning
@@ -118,6 +121,11 @@ def _parse_portal(raw: Any, base: Path, provider: dict[str, Any] | None) -> Port
             "portal.guide_url must be an https:// URL or a path on the portal like /guide/, "
             f"got: {guide_url[:80]!r}"
         )
+    language = str(raw.get("language") or "en").strip()
+    if language not in _VALID_PORTAL_LANGUAGES:
+        raise ConfigError(
+            f"portal.language must be one of {list(_VALID_PORTAL_LANGUAGES)}, got: {language[:20]!r}"
+        )
     labels = raw.get("labels") or {}
     return PortalConfig(
         enabled=enabled,
@@ -127,6 +135,7 @@ def _parse_portal(raw: Any, base: Path, provider: dict[str, Any] | None) -> Port
         title=str(raw.get("title") or ""),
         code_letters=code_letters,
         guide_url=guide_url,
+        language=language,
         hostname=hostname,
         instance_type=str(raw["instance_type"]).strip() if raw.get("instance_type") else None,
         host=str(raw["host"]).strip() if raw.get("host") else None,

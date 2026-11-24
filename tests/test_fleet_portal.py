@@ -441,3 +441,19 @@ def test_portal_up_passes_guide_url_quoted():
                             guide_url="https://avaleror.github.io/suse-virt-workshop/")
     assert "--guide-url https://avaleror.github.io/suse-virt-workshop/" in s
     assert "--guide-url ''" in fp.portal_up_script("p.sslip.io", mode="open", title="T")
+
+
+@pytest.mark.parametrize("lang,ok", [("en", True), ("zh-TW", True), ("", True), ("fr", False)])
+def test_language_validation(tmp_path, lang, ok):
+    p = _write(tmp_path, {"enabled": True, "language": lang})
+    if ok:
+        assert load_inventory(p).portal.language == (lang or "en")
+    else:
+        with pytest.raises(ConfigError, match="language"):
+            load_inventory(p)
+
+
+def test_portal_up_passes_language():
+    assert "--language zh-TW" in fp.portal_up_script("p.sslip.io", mode="open", title="T",
+                                                     language="zh-TW")
+    assert "--language en" in fp.portal_up_script("p.sslip.io", mode="open", title="T")

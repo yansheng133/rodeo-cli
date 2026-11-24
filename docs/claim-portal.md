@@ -250,6 +250,7 @@ portal:
   mode: both                 # roster | open | both
   roster: students.csv       # roster / both
   student_ssh: false         # per-lab 'student' user + key, on its own sshd at :2222
+  language: en               # student pages: en (default) | zh-TW
   close_after: 2h            # optional: stop accepting new claims
   # instance_type: t3.small  # provider-specific override
   # hostname: labs.example.com   # instead of portal-<ip>.sslip.io
@@ -436,3 +437,22 @@ Fix:
   without the portal-wide cap).
 - Existing portals: the next `portal up` after upgrading rotates the code to the new
   length, as any `code_letters` change does.
+
+## 14d. Student page language (2026-11-24)
+
+`portal.language` sets the language of every page a student sees: `en` (default) or
+`zh-TW` (Traditional Chinese, Taiwan). `portal up` passes it to
+`rodeo_portal admin init --language`, so it can be changed at any time; claims are kept.
+`load_inventory` refuses other values.
+
+- English is the source text and the catalog key: `tr(lang, "English text")` in
+  `rodeo/portal/i18n.py` looks it up in a plain dict per language. A string missing
+  from a catalog, and any unknown language stored in the database, fall back to English.
+- Translated: page text, buttons, labels, the privacy notice and the refusals students
+  see (`ClaimError` texts from `claims.py`). `<html lang>` follows the language.
+- Not translated: workshop data (title, lab names, URLs, credentials, guide link) and
+  the instructor page, which stays in English.
+- There is no per-visitor switch (`?lang=` or `Accept-Language`): one workshop, one
+  language, and no extra cookie for the privacy notice to declare.
+- Adding a language: a new dict in `i18n.py`, its tag in `CATALOGS` and in
+  `_VALID_PORTAL_LANGUAGES` (`rodeo/fleet/inventory.py`).
