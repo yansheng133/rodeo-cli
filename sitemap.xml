@@ -1,0 +1,395 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+    <url>
+        <loc>https://yansheng133.github.io/rodeo-cli/</loc>
+        <lastmod>2026-11-25</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://yansheng133.github.io/rodeo-cli/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://yansheng133.github.io/rodeo-cli/zh-TW/"/>
+    </url>
+    <url>
+        <loc>https://yansheng133.github.io/rodeo-cli/architecture/</loc>
+        <lastmod>2026-11-25</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://yansheng133.github.io/rodeo-cli/architecture/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://yansheng133.github.io/rodeo-cli/zh-TW/architecture/"/>
+    </url>
+    <url>
+        <loc>https://yansheng133.github.io/rodeo-cli/claim-portal-plan/</loc>
+        <lastmod>2026-11-25</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://yansheng133.github.io/rodeo-cli/claim-portal-plan/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://yansheng133.github.io/rodeo-cli/zh-TW/claim-portal-plan/"/>
+    </url>
+    <url>
+        <loc>https://yansheng133.github.io/rodeo-cli/claim-portal/</loc>
+        <lastmod>2026-11-25</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://yansheng133.github.io/rodeo-cli/claim-portal/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://yansheng133.github.io/rodeo-cli/zh-TW/claim-portal/"/>
+    </url>
+    <url>
+        <loc>https://yansheng133.github.io/rodeo-cli/custom-rodeos/</loc>
+        <lastmod>2026-11-25</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://yansheng133.github.io/rodeo-cli/custom-rodeos/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://yansheng133.github.io/rodeo-cli/zh-TW/custom-rodeos/"/>
+    </url>
+    <url>
+        <loc>https://yansheng133.github.io/rodeo-cli/fleet/</loc>
+        <lastmod>2026-11-25</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://yansheng133.github.io/rodeo-cli/fleet/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://yansheng133.github.io/rodeo-cli/zh-TW/fleet/"/>
+    </url>
+    <url>
+        <loc>https://yansheng133.github.io/rodeo-cli/get-started/</loc>
+        <lastmod>2026-11-25</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://yansheng133.github.io/rodeo-cli/get-started/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://yansheng133.github.io/rodeo-cli/zh-TW/get-started/"/>
+    </url>
+    <url>
+        <loc>https://yansheng133.github.io/rodeo-cli/guide-harvester/</loc>
+        <lastmod>2026-11-25</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://yansheng133.github.io/rodeo-cli/guide-harvester/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://yansheng133.github.io/rodeo-cli/zh-TW/guide-harvester/"/>
+    </url>
+    <url>
+        <loc>https://yansheng133.github.io/rodeo-cli/guide-kvm-hosts/</loc>
+        <lastmod>2026-11-25</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://yansheng133.github.io/rodeo-cli/guide-kvm-hosts/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://yansheng133.github.io/rodeo-cli/zh-TW/guide-kvm-hosts/"/>
+    </url>
+    <url>
+        <loc>https://yansheng133.github.io/rodeo-cli/guide-rancher/</loc>
+        <lastmod>2026-11-25</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://yansheng133.github.io/rodeo-cli/guide-rancher/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://yansheng133.github.io/rodeo-cli/zh-TW/guide-rancher/"/>
+    </url>
+    <url>
+        <loc>https://yansheng133.github.io/rodeo-cli/guide-suse-edge/</loc>
+        <lastmod>2026-11-25</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://yansheng133.github.io/rodeo-cli/guide-suse-edge/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://yansheng133.github.io/rodeo-cli/zh-TW/guide-suse-edge/"/>
+    </url>
+    <url>
+        <loc>https://yansheng133.github.io/rodeo-cli/install/</loc>
+        <lastmod>2026-11-25</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://yansheng133.github.io/rodeo-cli/install/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://yansheng133.github.io/rodeo-cli/zh-TW/install/"/>
+    </url>
+    <url>
+        <loc>https://yansheng133.github.io/rodeo-cli/mcp/</loc>
+        <lastmod>2026-11-25</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://yansheng133.github.io/rodeo-cli/mcp/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://yansheng133.github.io/rodeo-cli/zh-TW/mcp/"/>
+    </url>
+    <url>
+        <loc>https://yansheng133.github.io/rodeo-cli/releasing/</loc>
+        <lastmod>2026-11-25</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://yansheng133.github.io/rodeo-cli/releasing/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://yansheng133.github.io/rodeo-cli/zh-TW/releasing/"/>
+    </url>
+    <url>
+        <loc>https://yansheng133.github.io/rodeo-cli/rodeo-builder/</loc>
+        <lastmod>2026-11-25</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://yansheng133.github.io/rodeo-cli/rodeo-builder/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://yansheng133.github.io/rodeo-cli/zh-TW/rodeo-builder/"/>
+    </url>
+    <url>
+        <loc>https://yansheng133.github.io/rodeo-cli/runbook/</loc>
+        <lastmod>2026-11-25</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://yansheng133.github.io/rodeo-cli/runbook/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://yansheng133.github.io/rodeo-cli/zh-TW/runbook/"/>
+    </url>
+    <url>
+        <loc>https://yansheng133.github.io/rodeo-cli/user-guide/</loc>
+        <lastmod>2026-11-25</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://yansheng133.github.io/rodeo-cli/user-guide/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://yansheng133.github.io/rodeo-cli/zh-TW/user-guide/"/>
+    </url>
+    <url>
+        <loc>https://yansheng133.github.io/rodeo-cli/archive/audit-2026-07-14/</loc>
+        <lastmod>2026-11-25</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://yansheng133.github.io/rodeo-cli/archive/audit-2026-07-14/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://yansheng133.github.io/rodeo-cli/zh-TW/archive/audit-2026-07-14/"/>
+    </url>
+    <url>
+        <loc>https://yansheng133.github.io/rodeo-cli/archive/audit-2026-07-16/</loc>
+        <lastmod>2026-11-25</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://yansheng133.github.io/rodeo-cli/archive/audit-2026-07-16/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://yansheng133.github.io/rodeo-cli/zh-TW/archive/audit-2026-07-16/"/>
+    </url>
+    <url>
+        <loc>https://yansheng133.github.io/rodeo-cli/archive/audit-2026-08-05/</loc>
+        <lastmod>2026-11-25</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://yansheng133.github.io/rodeo-cli/archive/audit-2026-08-05/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://yansheng133.github.io/rodeo-cli/zh-TW/archive/audit-2026-08-05/"/>
+    </url>
+    <url>
+        <loc>https://yansheng133.github.io/rodeo-cli/examples/aws-fleet-claude-test-plan/</loc>
+        <lastmod>2026-11-25</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://yansheng133.github.io/rodeo-cli/examples/aws-fleet-claude-test-plan/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://yansheng133.github.io/rodeo-cli/zh-TW/examples/aws-fleet-claude-test-plan/"/>
+    </url>
+    <url>
+        <loc>https://yansheng133.github.io/rodeo-cli/examples/aws-macos/</loc>
+        <lastmod>2026-11-25</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://yansheng133.github.io/rodeo-cli/examples/aws-macos/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://yansheng133.github.io/rodeo-cli/zh-TW/examples/aws-macos/"/>
+    </url>
+    <url>
+        <loc>https://yansheng133.github.io/rodeo-cli/examples/bare-metal/</loc>
+        <lastmod>2026-11-25</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://yansheng133.github.io/rodeo-cli/examples/bare-metal/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://yansheng133.github.io/rodeo-cli/zh-TW/examples/bare-metal/"/>
+    </url>
+    <url>
+        <loc>https://yansheng133.github.io/rodeo-cli/examples/instruqt/</loc>
+        <lastmod>2026-11-25</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://yansheng133.github.io/rodeo-cli/examples/instruqt/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://yansheng133.github.io/rodeo-cli/zh-TW/examples/instruqt/"/>
+    </url>
+    <url>
+        <loc>https://yansheng133.github.io/rodeo-cli/examples/testing/</loc>
+        <lastmod>2026-11-25</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://yansheng133.github.io/rodeo-cli/examples/testing/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://yansheng133.github.io/rodeo-cli/zh-TW/examples/testing/"/>
+    </url>
+    <url>
+        <loc>https://yansheng133.github.io/rodeo-cli/examples/workshop/</loc>
+        <lastmod>2026-11-25</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://yansheng133.github.io/rodeo-cli/examples/workshop/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://yansheng133.github.io/rodeo-cli/zh-TW/examples/workshop/"/>
+    </url>
+    <url>
+        <loc>https://yansheng133.github.io/rodeo-cli/reference/definition/</loc>
+        <lastmod>2026-11-25</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://yansheng133.github.io/rodeo-cli/reference/definition/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://yansheng133.github.io/rodeo-cli/zh-TW/reference/definition/"/>
+    </url>
+    <url>
+        <loc>https://yansheng133.github.io/rodeo-cli/reference/plan/</loc>
+        <lastmod>2026-11-25</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://yansheng133.github.io/rodeo-cli/reference/plan/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://yansheng133.github.io/rodeo-cli/zh-TW/reference/plan/"/>
+    </url>
+    <url>
+        <loc>https://yansheng133.github.io/rodeo-cli/zh-TW/</loc>
+        <lastmod>2026-11-25</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://yansheng133.github.io/rodeo-cli/zh-TW/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://yansheng133.github.io/rodeo-cli/"/>
+    </url>
+    <url>
+        <loc>https://yansheng133.github.io/rodeo-cli/zh-TW/architecture/</loc>
+        <lastmod>2026-11-25</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://yansheng133.github.io/rodeo-cli/zh-TW/architecture/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://yansheng133.github.io/rodeo-cli/architecture/"/>
+    </url>
+    <url>
+        <loc>https://yansheng133.github.io/rodeo-cli/zh-TW/claim-portal-plan/</loc>
+        <lastmod>2026-11-25</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://yansheng133.github.io/rodeo-cli/zh-TW/claim-portal-plan/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://yansheng133.github.io/rodeo-cli/claim-portal-plan/"/>
+    </url>
+    <url>
+        <loc>https://yansheng133.github.io/rodeo-cli/zh-TW/claim-portal/</loc>
+        <lastmod>2026-11-25</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://yansheng133.github.io/rodeo-cli/zh-TW/claim-portal/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://yansheng133.github.io/rodeo-cli/claim-portal/"/>
+    </url>
+    <url>
+        <loc>https://yansheng133.github.io/rodeo-cli/zh-TW/custom-rodeos/</loc>
+        <lastmod>2026-11-25</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://yansheng133.github.io/rodeo-cli/zh-TW/custom-rodeos/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://yansheng133.github.io/rodeo-cli/custom-rodeos/"/>
+    </url>
+    <url>
+        <loc>https://yansheng133.github.io/rodeo-cli/zh-TW/fleet/</loc>
+        <lastmod>2026-11-25</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://yansheng133.github.io/rodeo-cli/zh-TW/fleet/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://yansheng133.github.io/rodeo-cli/fleet/"/>
+    </url>
+    <url>
+        <loc>https://yansheng133.github.io/rodeo-cli/zh-TW/get-started/</loc>
+        <lastmod>2026-11-25</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://yansheng133.github.io/rodeo-cli/zh-TW/get-started/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://yansheng133.github.io/rodeo-cli/get-started/"/>
+    </url>
+    <url>
+        <loc>https://yansheng133.github.io/rodeo-cli/zh-TW/guide-harvester/</loc>
+        <lastmod>2026-11-25</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://yansheng133.github.io/rodeo-cli/zh-TW/guide-harvester/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://yansheng133.github.io/rodeo-cli/guide-harvester/"/>
+    </url>
+    <url>
+        <loc>https://yansheng133.github.io/rodeo-cli/zh-TW/guide-kvm-hosts/</loc>
+        <lastmod>2026-11-25</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://yansheng133.github.io/rodeo-cli/zh-TW/guide-kvm-hosts/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://yansheng133.github.io/rodeo-cli/guide-kvm-hosts/"/>
+    </url>
+    <url>
+        <loc>https://yansheng133.github.io/rodeo-cli/zh-TW/guide-rancher/</loc>
+        <lastmod>2026-11-25</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://yansheng133.github.io/rodeo-cli/zh-TW/guide-rancher/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://yansheng133.github.io/rodeo-cli/guide-rancher/"/>
+    </url>
+    <url>
+        <loc>https://yansheng133.github.io/rodeo-cli/zh-TW/guide-suse-edge/</loc>
+        <lastmod>2026-11-25</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://yansheng133.github.io/rodeo-cli/zh-TW/guide-suse-edge/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://yansheng133.github.io/rodeo-cli/guide-suse-edge/"/>
+    </url>
+    <url>
+        <loc>https://yansheng133.github.io/rodeo-cli/zh-TW/install/</loc>
+        <lastmod>2026-11-25</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://yansheng133.github.io/rodeo-cli/zh-TW/install/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://yansheng133.github.io/rodeo-cli/install/"/>
+    </url>
+    <url>
+        <loc>https://yansheng133.github.io/rodeo-cli/zh-TW/mcp/</loc>
+        <lastmod>2026-11-25</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://yansheng133.github.io/rodeo-cli/zh-TW/mcp/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://yansheng133.github.io/rodeo-cli/mcp/"/>
+    </url>
+    <url>
+        <loc>https://yansheng133.github.io/rodeo-cli/zh-TW/releasing/</loc>
+        <lastmod>2026-11-25</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://yansheng133.github.io/rodeo-cli/zh-TW/releasing/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://yansheng133.github.io/rodeo-cli/releasing/"/>
+    </url>
+    <url>
+        <loc>https://yansheng133.github.io/rodeo-cli/zh-TW/rodeo-builder/</loc>
+        <lastmod>2026-11-25</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://yansheng133.github.io/rodeo-cli/zh-TW/rodeo-builder/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://yansheng133.github.io/rodeo-cli/rodeo-builder/"/>
+    </url>
+    <url>
+        <loc>https://yansheng133.github.io/rodeo-cli/zh-TW/runbook/</loc>
+        <lastmod>2026-11-25</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://yansheng133.github.io/rodeo-cli/zh-TW/runbook/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://yansheng133.github.io/rodeo-cli/runbook/"/>
+    </url>
+    <url>
+        <loc>https://yansheng133.github.io/rodeo-cli/zh-TW/user-guide/</loc>
+        <lastmod>2026-11-25</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://yansheng133.github.io/rodeo-cli/zh-TW/user-guide/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://yansheng133.github.io/rodeo-cli/user-guide/"/>
+    </url>
+    <url>
+        <loc>https://yansheng133.github.io/rodeo-cli/zh-TW/archive/audit-2026-07-14/</loc>
+        <lastmod>2026-11-25</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://yansheng133.github.io/rodeo-cli/zh-TW/archive/audit-2026-07-14/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://yansheng133.github.io/rodeo-cli/archive/audit-2026-07-14/"/>
+    </url>
+    <url>
+        <loc>https://yansheng133.github.io/rodeo-cli/zh-TW/archive/audit-2026-07-16/</loc>
+        <lastmod>2026-11-25</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://yansheng133.github.io/rodeo-cli/zh-TW/archive/audit-2026-07-16/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://yansheng133.github.io/rodeo-cli/archive/audit-2026-07-16/"/>
+    </url>
+    <url>
+        <loc>https://yansheng133.github.io/rodeo-cli/zh-TW/archive/audit-2026-08-05/</loc>
+        <lastmod>2026-11-25</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://yansheng133.github.io/rodeo-cli/zh-TW/archive/audit-2026-08-05/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://yansheng133.github.io/rodeo-cli/archive/audit-2026-08-05/"/>
+    </url>
+    <url>
+        <loc>https://yansheng133.github.io/rodeo-cli/zh-TW/examples/aws-fleet-claude-test-plan/</loc>
+        <lastmod>2026-11-25</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://yansheng133.github.io/rodeo-cli/zh-TW/examples/aws-fleet-claude-test-plan/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://yansheng133.github.io/rodeo-cli/examples/aws-fleet-claude-test-plan/"/>
+    </url>
+    <url>
+        <loc>https://yansheng133.github.io/rodeo-cli/zh-TW/examples/aws-macos/</loc>
+        <lastmod>2026-11-25</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://yansheng133.github.io/rodeo-cli/zh-TW/examples/aws-macos/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://yansheng133.github.io/rodeo-cli/examples/aws-macos/"/>
+    </url>
+    <url>
+        <loc>https://yansheng133.github.io/rodeo-cli/zh-TW/examples/bare-metal/</loc>
+        <lastmod>2026-11-25</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://yansheng133.github.io/rodeo-cli/zh-TW/examples/bare-metal/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://yansheng133.github.io/rodeo-cli/examples/bare-metal/"/>
+    </url>
+    <url>
+        <loc>https://yansheng133.github.io/rodeo-cli/zh-TW/examples/instruqt/</loc>
+        <lastmod>2026-11-25</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://yansheng133.github.io/rodeo-cli/zh-TW/examples/instruqt/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://yansheng133.github.io/rodeo-cli/examples/instruqt/"/>
+    </url>
+    <url>
+        <loc>https://yansheng133.github.io/rodeo-cli/zh-TW/examples/testing/</loc>
+        <lastmod>2026-11-25</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://yansheng133.github.io/rodeo-cli/zh-TW/examples/testing/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://yansheng133.github.io/rodeo-cli/examples/testing/"/>
+    </url>
+    <url>
+        <loc>https://yansheng133.github.io/rodeo-cli/zh-TW/examples/workshop/</loc>
+        <lastmod>2026-11-25</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://yansheng133.github.io/rodeo-cli/zh-TW/examples/workshop/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://yansheng133.github.io/rodeo-cli/examples/workshop/"/>
+    </url>
+    <url>
+        <loc>https://yansheng133.github.io/rodeo-cli/zh-TW/reference/definition/</loc>
+        <lastmod>2026-11-25</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://yansheng133.github.io/rodeo-cli/zh-TW/reference/definition/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://yansheng133.github.io/rodeo-cli/reference/definition/"/>
+    </url>
+    <url>
+        <loc>https://yansheng133.github.io/rodeo-cli/zh-TW/reference/plan/</loc>
+        <lastmod>2026-11-25</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://yansheng133.github.io/rodeo-cli/zh-TW/reference/plan/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://yansheng133.github.io/rodeo-cli/reference/plan/"/>
+    </url>
+</urlset>
