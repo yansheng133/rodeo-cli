@@ -17,7 +17,8 @@ See also: [Get started](get-started.md) (single host), [Architecture](architectu
 | **F2.2** | Shipped | The whole flow in one command | `rodeo fleet up` |
 | **F2.1** | Shipped | Failure forensics | `rodeo fleet diagnose` |
 | **F4a** | Shipped | AWS host-acquire, 6 h dead-man switch per host | `rodeo fleet provision`, `deprovision` |
-| **F4b–d** | Roadmap | GCP → Vultr BM → Hetzner | (planned) |
+| **F4b** | Shipped (single host) | GCP | `rodeo up --target gcp` |
+| **F4c–d** | Roadmap | Vultr BM → Hetzner | (planned) |
 | **F5** | Shipped (AWS, v0.18) | Student claim portal: each student enters a workshop code and gets their own lab; student SSH on its own port | `rodeo fleet open-access`, `rodeo fleet portal ...` ([design](claim-portal.md), [plan](claim-portal-plan.md)) |
 
 Host prerequisites (after [`install.sh`](https://github.com/avaleror/rodeo-cli/blob/main/install.sh) on each lab machine):
@@ -62,7 +63,7 @@ OpenSSH-only.
 | Order | Provider | Status |
 |-------|----------|--------|
 | **F4a** | **AWS** (`boto3`, the `[aws]` extra: see [Install](install.md)) | **MVP shipped**: create/reuse by tags, wait running + SSH, write `hosts[]`, terminate tagged only |
-| **F4b** | **GCP** (`google-cloud-compute`) | Planned |
+| **F4b** | **GCP** (`google-cloud-compute`) | Single host shipped; fleet portal and open-access still AWS-only |
 | **F4c** | **Vultr Bare Metal** (`[vultr]` extra) | Planned: after GCP; real metal for nested KVM |
 | **F4d** | **Hetzner Cloud** (`hcloud`) | Planned: after Vultr; nested KVM must be validated |
 
@@ -367,6 +368,62 @@ stays operator-only. Any later `fleet provision` closes the ports again. With
 `provider.security_group_ids` (BYO) rodeo changes nothing and asks you to open the
 ports yourself.
 
+### Shared accounts: who owns what (AWS and GCP)
+
+Several people often deploy into one AWS account, and lab names repeat: two people
+running the `rancher-test` profile both get a lab called `rancher-test`. So rodeo
+never picks cloud resources by lab name alone. Every resource carries
+`rodeo-owner` (the caller ARN, or `RODEO_OWNER` in CI) and `rodeo-deployment`
+(8 hex chars, made with the lab key), and those two decide what is yours.
+
+- Two people may use the same plan or workshop name in the same region at the
+  same time. Each gets its own instances, security group
+  (`rodeo-<lab>-<deployment>`) and key pair.
+- `rodeo destroy --cloud`, `fleet deprovision` and the portal teardown only remove
+  the deployment this login owns. Without the lab key on this machine they only
+  touch the instance ids this machine recorded, and refuse when there are none.
+- `rodeo cloud ls` lists your deployments in a region (`--all` shows everyone's,
+  with owners). It reads the tags from AWS, so it works from another laptop too.
+- `rodeo cloud destroy <deployment>` removes one of your deployments from
+  anywhere: instances, security groups and key pair. Someone else's needs
+  `--not-mine`, and you have to type their owner to confirm.
+- Labs from before this change have no `rodeo-deployment`. The machine holding
+  their key adopts them on the next `up` or `destroy` (tags added, names kept).
+  Anyone else sees them as `legacy` in `rodeo cloud ls --all`.
+
+On GCP the same rule applies, with three differences. The owner is your GCP account
+(from Application Default Credentials). Labels cannot hold `@` or `.`, so the
+`rodeo-owner` label is a readable form plus a short hash, and the raw account sits
+in instance metadata. Firewall rules take no labels, so `rodeo-<lab>-<deployment>`
+records owner and deployment in its description. Use `rodeo cloud ls --provider gcp`
+(the whole project) and `rodeo cloud destroy --provider gcp <deployment>`. A GCP lab
+from before this change is adopted by the machine whose lab public key sits in the
+instance's `ssh-keys` metadata.
+
+The owner check guards against a rodeo command hitting the wrong lab. It is not a
+permission system: anyone with PowerUser can still delete the instance in the
+console.
+
+### Track workshop cost
+
+The tags above are also cost allocation tags. `rodeo-workshop` splits the bill per
+workshop, `rodeo-owner` per person, and `ManagedBy` sums everything rodeo runs.
+
+- Activation happens in the AWS **management (payer) account**, under Billing, Cost
+  allocation tags. A linked account cannot do it (`aws ce list-cost-allocation-tags`
+  fails there), so ask whoever owns billing.
+- New data shows up about 24 h after activation. A backfill (up to 12 months back,
+  one request per 24 h) only counts hours where the tag was already on the
+  resource.
+- Values are case-sensitive: `rodeo-workshop=suse-virt` and `SUSE-Virt` are two
+  lines on the bill.
+- Root volumes and network interfaces carry the tags too, so disk cost lands under
+  the workshop. Whether the public IPv4 charge follows the network interface tag in
+  Cost Explorer is not confirmed yet: check a real bill before relying on it.
+
+Tags explain a bill, they don't cap it. The cap is still the dead-man switch: 6 h by
+default, 168 h at most (`provider.ttl_hours`).
+
 ### Claim portal (F5)
 
 Students open one HTTPS page and enter the **workshop code** you give them (from
@@ -529,7 +586,7 @@ Fleet does **not** sudo-re-exec on the laptop.
 
 Shared Protocol / schema for host-acquire. **AWS (F4a) MVP is implemented** in
 `rodeo/providers/` for both Fleet and single-host `deployment_target: aws`.
-GCP / Vultr / Hetzner remain stubs. Summary in [Roadmap](#roadmap).
+Vultr / Hetzner remain stubs; GCP has a provider (single host live-tested). Summary in [Roadmap](#roadmap).
 
 **Important: never set `lab.target: aws` in `workshop.yaml`.**
 
@@ -583,6 +640,14 @@ directly: only the registry + this surface.
 | `ManagedBy` | `rodeo` |
 | `rodeo-workshop` | plan `name:` / workshop `name:` |
 | `rodeo-host-id` | inventory host `id` (e.g. `student-01`) or `primary` for single-host |
+| `rodeo-owner` | who launched it: the caller ARN from `sts get-caller-identity`, or `RODEO_OWNER` |
+| `rodeo-deployment` | 8 hex chars, one per deployment (also the suffix of the lab key pair name) |
+| `rodeo-version` | the rodeo-cli version that created it |
+| `rodeo-created-by` | the raw caller ARN |
+
+On AWS the same tags go on the instance, its root volume, its network interface,
+the lab and portal security groups and the lab key pair. `provider.labels` cannot
+set `ManagedBy`, `managed-by` or any `rodeo-*` key: validation fails instead.
 
 GCP uses labels (DNS-1123); normalize keys to lowercase where the cloud requires it, but keep the same logical names.
 
@@ -662,9 +727,9 @@ it on each KVM host so nested VMs share it, and `rodeo ssh` / `fleet` pick it up
 their own. When the last instance of the workshop goes (`fleet deprovision`,
 `rodeo destroy --cloud`), rodeo deletes the key pair in EC2 and the local key. Keys of
 labs that ended some other way (dead-man switch, console) are swept on the next
-`provision` in the same region. If the workshop name already has live instances
-launched with a key that is not on this machine (another user in a shared account),
-`provision` stops with an error instead of adopting them: pick another name.
+`provision` in the same region. Another user's live lab with the same name (shared
+account) is not yours: `provision` ignores it and starts its own deployment, see
+[Shared accounts](#shared-accounts-who-owns-what-aws-and-gcp).
 New instances also get cloud-init UserData: root authorized_keys + `NOPASSWD` sudo
 for `ssh_user` so remote `rodeo up` never asks for a password.
 Use `rodeo ssh student-01` or `rodeo ssh student-01/rancher`.
@@ -704,18 +769,24 @@ SLES 16 works too: set `ami:` to that image id and `ssh_user` if it is not `ec2-
 provider:
   type: gcp
   count: 12
-  project: my-gcp-project           # required
-  zone: europe-west3-a              # required
-  machine_type: n2-standard-32      # required
-  image: projects/…/global/images/… # required (or family)
-  network: default                  # or full URL
-  subnetwork: regions/…/subnetworks/…
-  # enable_nested_virtualization: true   # default true for rodeo
-  # min_cpu_platform: "Intel Cascade Lake"
-  # tags: [rodeo-fleet]             # GCP network tags for firewall
+  project: my-gcp-project           # default: gcloud / ADC project
+  region: europe-west4              # default; zone is picked per capacity
+  # zone: europe-west4-b            # pin one zone
+  instance_tier: recommended        # or instance_type: c4-standard-32-lssd
+  # image_family: sles-16-1-x86-64  # default, image_project: suse-cloud
+  # network: rodeo-europe-west4     # default: created by rodeo
+  # allowed_cidrs: ["203.0.113.0/24"]   # default: this machine's IP only
+  # ttl_hours: 6
 ```
 
-Auth: Application Default Credentials / service account, not stored in `workshop.yaml`.
+Auth: Application Default Credentials (`gcloud auth application-default login`), never stored
+in `workshop.yaml`. Field details: [plan reference](reference/plan.md#provider-when-deployment_target-gcp).
+
+Ownership works as on AWS: see [Shared accounts](#shared-accounts-who-owns-what-aws-and-gcp).
+
+Status: single-host `rodeo up --target gcp` is live-tested. `fleet provision` uses the same
+provider and creates one VM per host id, but the claim portal and `fleet open-access` are
+AWS-only for now.
 
 #### `provider.type: vultr` (F4c)
 
